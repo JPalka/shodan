@@ -29,6 +29,9 @@ gem 'tribes', '~> 1', git: 'https://github.com/jpalka/tribes.git'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'database_cleaner'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'pry'
   gem 'rspec-rails'
   gem 'shoulda-matchers', '~> 4.0'
