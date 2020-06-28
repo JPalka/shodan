@@ -1,3 +1,17 @@
+GIT
+  remote: https://github.com/jpalka/tribes.git
+  revision: aa67b3df30bb89dd278cdcba4dce810fd734bc75
+  specs:
+    tribes (1.2.0)
+      activesupport (~> 6.0)
+      apparition
+      capybara (~> 3)
+      faraday (~> 1.0)
+      faraday-cookie_jar (= 0.0.6)
+      faraday_middleware (~> 1.0)
+      nokogiri (~> 1)
+      selenium-webdriver (~> 3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -56,17 +70,42 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    apparition (0.6.0)
+      capybara (~> 3.13, < 4)
+      websocket-driver (>= 0.6.5)
     bootsnap (1.4.6)
       msgpack (~> 1.0)
     builder (3.2.4)
     byebug (11.1.3)
+    capybara (3.33.0)
+      addressable
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (~> 1.5)
+      xpath (~> 3.2)
+    childprocess (3.0.0)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
     diff-lcs (1.4.2)
+    domain_name (0.5.20190701)
+      unf (>= 0.0.5, < 1.0.0)
     erubi (1.9.0)
+    faraday (1.0.1)
+      multipart-post (>= 1.2, < 3)
+    faraday-cookie_jar (0.0.6)
+      faraday (>= 0.7.4)
+      http-cookie (~> 1.0.0)
+    faraday_middleware (1.0.0)
+      faraday (~> 1.0)
     ffi (1.13.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     listen (3.2.1)
@@ -85,10 +124,12 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.14.1)
     msgpack (1.3.3)
+    multipart-post (2.1.1)
     nio4r (2.5.2)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     pg (1.2.3)
+    public_suffix (4.0.5)
     puma (4.3.5)
       nio4r (~> 2.0)
     rack (2.2.3)
@@ -124,6 +165,7 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    regexp_parser (1.7.1)
     rspec-core (3.9.2)
       rspec-support (~> 3.9.3)
     rspec-expectations (3.9.2)
@@ -141,6 +183,10 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.3)
+    rubyzip (2.3.0)
+    selenium-webdriver (3.142.7)
+      childprocess (>= 0.5, < 4.0)
+      rubyzip (>= 1.2.2)
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -156,9 +202,14 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.7)
     websocket-driver (0.7.2)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
     zeitwerk (2.3.0)
 
 PLATFORMS
@@ -174,6 +225,7 @@ DEPENDENCIES
   rspec-rails
   spring
   spring-watcher-listen (~> 2.0.0)
+  tribes (~> 1)!
   tzinfo-data
 
 RUBY VERSION
