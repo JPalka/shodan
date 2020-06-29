@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :master_server do
-    link { "MyString" }
+    link { Faker::Internet.url(scheme: 'https') }
   end
 end
