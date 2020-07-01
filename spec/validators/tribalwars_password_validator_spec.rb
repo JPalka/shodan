@@ -30,7 +30,7 @@ describe TribalwarsPasswordValidator do
   end
 
   context 'when password is valid' do
-    let(:password) { Faker::Internet.password(min_length: 8, max_length: 20) }
+    let(:password) { Faker::Alphanumeric.alphanumeric(number: 8, min_numeric: 1) }
     it 'does not have errors' do
       expect(mock.errors.count).to eq(0)
     end

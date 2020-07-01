@@ -90,8 +90,7 @@ RSpec.describe "Accounts", type: :request do
   end
 
   describe 'PATCH /master_servers/:master_server/accounts/:id' do
-    let(:valid_data) { { password: 'new_password' } }
-
+    let(:valid_data) { { password: 'new_password1' } }
     before { put "/master_servers/#{server_id}/accounts/#{id}", params: valid_data }
 
     context 'when item exists' do
@@ -101,7 +100,7 @@ RSpec.describe "Accounts", type: :request do
       end
 
       it 'changes account data' do
-        expect(account.password).to eq(valid_data[:password])
+        expect(account.reload.password).to eq(valid_data[:password])
       end
     end
   end
