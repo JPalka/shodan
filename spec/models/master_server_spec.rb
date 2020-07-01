@@ -18,7 +18,7 @@ RSpec.describe MasterServer, type: :model do
 
     before do
       allow(Tribes::Client).to receive(:new).and_return(client)
-      allow(client).to receive(:world_list_global).and_return(worlds)
+      allow(client).to receive(:worlds_global).and_return(worlds)
     end
 
     context 'master server exists' do

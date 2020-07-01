@@ -21,13 +21,13 @@ RSpec.describe GetWorldListGlobal do
 
   describe '#execute' do
     context 'command succeeds' do
-      before { allow(client).to receive(:world_list_global).and_return(worlds) }
+      before { allow(client).to receive(:worlds_global).and_return(worlds) }
 
       it { expect(subject.execute).to eq(worlds) }
     end
 
     context 'command fails' do
-      before { allow(client).to receive(:world_list_global).and_raise(Exception) }
+      before { allow(client).to receive(:worlds_global).and_raise(Exception) }
 
       it { expect(subject.execute).to eq(nil) }
     end

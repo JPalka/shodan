@@ -4,7 +4,7 @@ class GetWorldListGlobal
   end
 
   def execute
-    @client.world_list_global
+    @client.worlds_global
   rescue Exception => ex
     nil
   end
