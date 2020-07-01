@@ -6,6 +6,6 @@ class GetWorldListGlobal
   def execute
     @client.world_list_global
   rescue Exception => ex
-    { error: 'Failed to download global world list' }
+    nil
   end
 end

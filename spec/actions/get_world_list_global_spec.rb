@@ -29,7 +29,7 @@ RSpec.describe GetWorldListGlobal do
     context 'command fails' do
       before { allow(client).to receive(:world_list_global).and_raise(Exception) }
 
-      it { expect(subject.execute).to eq({ error: 'Failed to download global world list' }) }
+      it { expect(subject.execute).to eq(nil) }
     end
   end
 end
