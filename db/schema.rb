@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_01_103159) do
+ActiveRecord::Schema.define(version: 2020_07_02_105516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,19 @@ ActiveRecord::Schema.define(version: 2020_07_01_103159) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "players", force: :cascade do |t|
+    t.integer "external_id"
+    t.string "name"
+    t.integer "points"
+    t.integer "rank"
+    t.bigint "world_id", null: false
+    t.bigint "account_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_players_on_account_id"
+    t.index ["world_id"], name: "index_players_on_world_id"
+  end
+
   create_table "worlds", force: :cascade do |t|
     t.string "name", null: false
     t.string "link", null: false
@@ -45,5 +58,7 @@ ActiveRecord::Schema.define(version: 2020_07_01_103159) do
   end
 
   add_foreign_key "accounts", "master_servers"
+  add_foreign_key "players", "accounts"
+  add_foreign_key "players", "worlds"
   add_foreign_key "worlds", "master_servers"
 end
