@@ -1,6 +1,7 @@
 class World < ApplicationRecord
   belongs_to :master_server
   has_many :players
+  has_many :villages
 
   serialize :world_config
   serialize :unit_config
@@ -42,6 +43,25 @@ class World < ApplicationRecord
       end
     end
     add_barbarian_player
+    self
+  end
+
+  def download_villages
+    client = Tribes::Client.new(master_server: master_server.link)
+    client.change_world('', world_url: link)
+    new_villages = GetVillages.new(client).execute
+    return nil if players.nil?
+
+    new_villages.each do |village|
+      village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id
+      village.delete(:rank)
+      old = villages.find_by(external_id: village[:external_id])
+      if old
+        villages.update(old.id, village)
+      else
+        villages.create!(village)
+      end
+    end
     self
   end
 

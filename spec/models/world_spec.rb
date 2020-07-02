@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe World, type: :model do
   it { is_expected.to belong_to(:master_server) }
   it { is_expected.to have_many(:players) }
+  it { is_expected.to have_many(:villages) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:master_server) }
@@ -173,6 +174,52 @@ RSpec.describe World, type: :model do
         it { expect(subject.players.first.points).to eq(500) }
         it { expect(subject.players.second.rank).to eq(300) }
       end
+    end
+  end
+
+  describe '#download_villages' do
+    let(:client) { double }
+    let(:villages_action) { double }
+    let(:villages) do
+      [{ external_id: 1,
+         name: 'Sammie+C.',
+         x_coord: 496,
+         y_coord: 524,
+         owner: 8_061_098,
+         points: 3096,
+         rank: 0 },
+       { external_id: 2,
+         name: 'Mayham',
+         x_coord: 495,
+         y_coord: 528,
+         owner: 8_049_221,
+         points: 10_019,
+         rank: 0 },
+       { external_id: 3,
+         name: 'Barbarian+village',
+         x_coord: 515,
+         y_coord: 483,
+         owner: 0,
+         points: 1514,
+         rank: 0 }]
+    end
+    let(:subject) { create(:world) }
+
+    before do
+      allow(Tribes::Client).to receive(:new).and_return(client)
+      allow(client).to receive(:change_world)
+      allow(GetVillages).to receive(:new).and_return(villages_action)
+      allow(villages_action).to receive(:execute).and_return(villages)
+      create(:player, external_id: 8_061_098, world_id: subject.id)
+      create(:player, external_id: 8_049_221, world_id: subject.id)
+      create(:player, external_id: 0, world_id: subject.id)
+      subject.download_villages
+    end
+
+    context 'no previous villages exist' do
+      it { expect(subject.villages.count).to eq(3) }
+      it { expect(subject.villages.first.external_id).to eq(1) }
+      it { expect(subject.villages.first.world_id).to eq(subject.id) }
     end
   end
 end
