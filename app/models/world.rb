@@ -1,5 +1,7 @@
 class World < ApplicationRecord
   belongs_to :master_server
+  has_many :players
+
   serialize :world_config
   serialize :unit_config
   serialize :building_config
@@ -20,6 +22,25 @@ class World < ApplicationRecord
     building = GetBuildingConfig.new(client).execute
     self.building_config = building if building
     save!
+    self
+  end
+
+  def download_players
+    client = Tribes::Client.new(master_server: master_server.link)
+    client.change_world('', world_url: link)
+    new_players = GetPlayers.new(client).execute
+    return nil if players.nil?
+
+    new_players.each do |player|
+      player.delete(:tribe_id)
+      player.delete(:village_count)
+      old = players.find_by(external_id: player[:external_id])
+      if old
+        players.update(old.id, player)
+      else
+        players.create!(player)
+      end
+    end
     self
   end
 end

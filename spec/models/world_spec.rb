@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe World, type: :model do
   it { is_expected.to belong_to(:master_server) }
+  it { is_expected.to have_many(:players) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:master_server) }
@@ -21,6 +22,7 @@ RSpec.describe World, type: :model do
 
     before do
       allow(Tribes::Client).to receive(:new).and_return(client)
+      allow(client).to receive(:change_world)
       allow(GetWorldConfig).to receive(:new).and_return(config_action)
       allow(GetUnitConfig).to receive(:new).and_return(unit_action)
       allow(GetBuildingConfig).to receive(:new).and_return(building_action)
@@ -100,6 +102,72 @@ RSpec.describe World, type: :model do
       end
       it 'sets building config' do
         expect(subject.building_config).to eq(building_action.execute)
+      end
+    end
+  end
+
+  describe '#download_players' do
+    let(:client) { double }
+    let(:players_action) { double }
+    let(:players) do
+      [{ name: 'wannat8',
+         external_id: 110_622,
+         tribe_id: 0,
+         village_count: 1,
+         points: 68,
+         rank: 420 },
+       { name: 'calaca',
+         external_id: 173_973,
+         tribe_id: 0,
+         village_count: 1,
+         points: 540,
+         rank: 210 }]
+    end
+
+    before do
+      allow(Tribes::Client).to receive(:new).and_return(client)
+      allow(client).to receive(:change_world)
+      allow(GetPlayers).to receive(:new).and_return(players_action)
+      allow(players_action).to receive(:execute).and_return(players)
+    end
+
+    let(:subject) { create(:world) }
+
+    before { subject.download_players }
+
+    context 'no previous players exist' do
+      it { expect(subject.players.count).to eq(2) }
+      it { expect(subject.players.first.external_id).to eq(110_622) }
+      it { expect(subject.players.first.world_id).to eq(subject.id) }
+    end
+
+    context 'players already exist' do
+      before { subject.download_players }
+
+      context 'with no changes' do
+        it { expect(subject.players.count).to eq(2) }
+        it { expect(subject.players.first.external_id).to eq(110_622) }
+        it { expect(subject.players.first.world_id).to eq(subject.id) }
+      end
+
+      context 'player list is different' do
+        let(:players) do
+          [{ name: 'wannat8',
+             external_id: 110_622,
+             tribe_id: 0,
+             village_count: 1,
+             points: 500,
+             rank: 420 },
+           { name: 'calaca',
+             external_id: 173_973,
+             tribe_id: 0,
+             village_count: 1,
+             points: 540,
+             rank: 300 }]
+        end
+
+        it { expect(subject.players.first.points).to eq(500) }
+        it { expect(subject.players.last.rank).to eq(300) }
       end
     end
   end
