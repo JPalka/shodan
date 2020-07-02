@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_02_105516) do
+ActiveRecord::Schema.define(version: 2020_07_02_175121) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,20 @@ ActiveRecord::Schema.define(version: 2020_07_02_105516) do
     t.index ["world_id"], name: "index_players_on_world_id"
   end
 
+  create_table "villages", force: :cascade do |t|
+    t.integer "external_id", null: false
+    t.integer "x_coord"
+    t.integer "y_coord"
+    t.bigint "owner_id", null: false
+    t.bigint "world_id", null: false
+    t.integer "points"
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["owner_id"], name: "index_villages_on_owner_id"
+    t.index ["world_id"], name: "index_villages_on_world_id"
+  end
+
   create_table "worlds", force: :cascade do |t|
     t.string "name", null: false
     t.string "link", null: false
@@ -60,5 +74,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_105516) do
   add_foreign_key "accounts", "master_servers"
   add_foreign_key "players", "accounts"
   add_foreign_key "players", "worlds"
+  add_foreign_key "villages", "players", column: "owner_id"
+  add_foreign_key "villages", "worlds"
   add_foreign_key "worlds", "master_servers"
 end
