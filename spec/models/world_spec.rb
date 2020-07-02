@@ -136,16 +136,20 @@ RSpec.describe World, type: :model do
     before { subject.download_players }
 
     context 'no previous players exist' do
-      it { expect(subject.players.count).to eq(2) }
+      it { expect(subject.players.count).to eq(3) }
       it { expect(subject.players.first.external_id).to eq(110_622) }
       it { expect(subject.players.first.world_id).to eq(subject.id) }
+      it 'adds barbarian player' do
+        expect(subject.players.find_by(external_id: 0)).to be_present
+        expect(subject.players.find_by(external_id: 0).name).to eq('Barbarian')
+      end
     end
 
     context 'players already exist' do
       before { subject.download_players }
 
       context 'with no changes' do
-        it { expect(subject.players.count).to eq(2) }
+        it { expect(subject.players.count).to eq(3) }
         it { expect(subject.players.first.external_id).to eq(110_622) }
         it { expect(subject.players.first.world_id).to eq(subject.id) }
       end
@@ -167,7 +171,7 @@ RSpec.describe World, type: :model do
         end
 
         it { expect(subject.players.first.points).to eq(500) }
-        it { expect(subject.players.last.rank).to eq(300) }
+        it { expect(subject.players.second.rank).to eq(300) }
       end
     end
   end

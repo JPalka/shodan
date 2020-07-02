@@ -41,6 +41,15 @@ class World < ApplicationRecord
         players.create!(player)
       end
     end
+    add_barbarian_player
     self
+  end
+
+  private
+
+  def add_barbarian_player
+    return if players.find_by(external_id: 0)
+    
+    players.create!(name: 'Barbarian', external_id: 0, points: 0, rank: 0)
   end
 end
