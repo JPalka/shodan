@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/jpalka/tribes.git
-  revision: e401425d89dafd00e578611e1e8280429585fa06
+  revision: ad3686a9524bad77ed0a70d933c11c88183531ff
   specs:
-    tribes (1.3.0)
+    tribes (1.3.1)
       activesupport (~> 6.0)
       apparition
       capybara (~> 3)
