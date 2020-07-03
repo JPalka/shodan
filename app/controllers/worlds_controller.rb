@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorldsController < ApplicationController
   before_action :set_server
   before_action :set_world, only: [:show]
@@ -17,6 +19,8 @@ class WorldsController < ApplicationController
   end
 
   def set_server
+    return unless params[:master_server_id]
+
     @server = MasterServer.find(params[:master_server_id])
   end
 end
