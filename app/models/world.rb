@@ -30,11 +30,15 @@ class World < ApplicationRecord
     players.count
   end
 
+  def village_count
+    villages.count
+  end
+
   def download_players
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
     new_players = GetPlayers.new(client).execute
-    return nil if players.nil?
+    return nil if new_players.nil?
 
     new_players.each do |player|
       player.delete(:tribe_id)
@@ -54,7 +58,7 @@ class World < ApplicationRecord
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
     new_villages = GetVillages.new(client).execute
-    return nil if players.nil?
+    return nil if new_villages.nil?
 
     new_villages.each do |village|
       village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id

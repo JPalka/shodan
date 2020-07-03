@@ -44,6 +44,11 @@ RSpec.describe "Worlds", type: :request do
         expect(json).to include('player_count')
         expect(json['player_count']).to eq(0)
       end
+
+      it 'includes village count' do
+        expect(json).to include('village_count')
+        expect(json['village_count']).to eq(0)
+      end
     end
 
     context 'when world does not exist' do
