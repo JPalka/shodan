@@ -19,6 +19,8 @@ class PlayersController < ApplicationController
   end
 
   def set_world
+    return unless params[:world_id]
+
     @world = World.find(params[:world_id])
   end
 end

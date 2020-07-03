@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AccountsController < ApplicationController
   before_action :set_server
-  before_action :set_account, only: [:show, :update]
+  before_action :set_account, only: %i[show update]
 
   def index
     json_response(@server.accounts)
@@ -31,6 +33,8 @@ class AccountsController < ApplicationController
   end
 
   def set_server
+    return unless params[:master_server_id]
+
     @server = MasterServer.find(params[:master_server_id])
   end
 end
