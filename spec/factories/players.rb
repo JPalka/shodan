@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :player do
-    external_id { 100 }
+    sequence(:external_id, 100)
     name { "Player" }
     points { 0 }
     rank { 0 }

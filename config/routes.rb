@@ -4,4 +4,8 @@ Rails.application.routes.draw do
     resources :accounts
     resources :worlds
   end
+
+  resources :worlds, only: [:show] do
+    resources :players
+  end
 end
