@@ -5,6 +5,7 @@ class GetVillages
 
   def execute
     @client.browser.load_page 'village_list'
+    sleep(5)
     villages = @client.browser.extract[:villages]
     villages.each do |village|
       village[:external_id] = village.delete(:id)
