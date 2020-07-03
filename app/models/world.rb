@@ -26,6 +26,10 @@ class World < ApplicationRecord
     self
   end
 
+  def player_count
+    players.count
+  end
+
   def download_players
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)

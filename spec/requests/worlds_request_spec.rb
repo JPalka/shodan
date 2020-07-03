@@ -39,6 +39,11 @@ RSpec.describe "Worlds", type: :request do
         expect(json['id']).to eq(id)
         expect(json).to include('id', 'name', 'link', 'master_server_id', 'world_config', 'unit_config', 'building_config')
       end
+
+      it 'includes player count' do
+        expect(json).to include('player_count')
+        expect(json['player_count']).to eq(0)
+      end
     end
 
     context 'when world does not exist' do

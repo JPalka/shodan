@@ -9,7 +9,7 @@ class WorldsController < ApplicationController
   end
 
   def show
-    json_response(@world)
+    json_response(@world, extra_methods: [:player_count])
   end
 
   private
