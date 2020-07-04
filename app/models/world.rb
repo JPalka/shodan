@@ -47,13 +47,12 @@ class World < ApplicationRecord
       player.delete(:tribe_id)
       player.delete(:village_count)
       player[:world_id] = world_id
-      Player.new(player)
     end
-    Player.import new_players, on_duplicate_key_update: {
+    result = Player.import new_players, on_duplicate_key_update: {
       conflict_target: %i[world_id external_id], colums: %i[name points rank]
     }
     add_barbarian_player
-    self
+    result
   end
 
   def download_villages
@@ -63,7 +62,7 @@ class World < ApplicationRecord
     world_id = id
     return nil if new_villages.nil?
 
-    new_villages.map! do |village|
+    new_villages.each do |village|
       village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id
       village[:world_id] = world_id
       village.delete(:rank)
@@ -72,7 +71,6 @@ class World < ApplicationRecord
     Village.import new_villages, on_duplicate_key_update: {
       conflict_target: %i[world_id external_id], columns: %i[owner_id points name]
     }
-    self
   end
 
   private
