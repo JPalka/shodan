@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Players', type: :request do
-  let!(:world) { create(:world) }
-  let!(:players) { create_list(:player, 2, world_id: world.id) }
-  let(:id) { players.first.id }
+  let!(:world) { create(:world_with_players) }
+  let(:id) { world.players.first.id }
   let(:world_id) { world.id }
 
   describe 'GET /worlds/:world/players' do
@@ -15,7 +14,7 @@ RSpec.describe 'Players', type: :request do
       it { expect(response).to have_http_status(200) }
 
       it 'returns all players in world' do
-        expect(json.size).to eq(2)
+        expect(json.size).to eq(world.players.count)
       end
     end
 
