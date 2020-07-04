@@ -35,6 +35,7 @@ group :development, :test do
   gem 'pry'
   gem 'rspec-rails'
   gem 'shoulda-matchers', '~> 4.0'
+  gem 'execution_time'
 end
 
 group :development do
