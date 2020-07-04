@@ -4,6 +4,7 @@ RSpec.describe Player, type: :model do
   subject { create(:player) }
   it { is_expected.to belong_to(:world) }
   it { is_expected.to belong_to(:account).without_validating_presence }
+  it { is_expected.to have_many(:villages) }
 
   it { is_expected.to validate_presence_of(:name) }
 
