@@ -42,16 +42,16 @@ class World < ApplicationRecord
     new_players = GetPlayers.new(client).execute
     return nil if new_players.nil?
 
+    world_id = id
     new_players.each do |player|
       player.delete(:tribe_id)
       player.delete(:village_count)
-      old = players.find_by(external_id: player[:external_id])
-      if old
-        players.update(old.id, player)
-      else
-        players.create!(player)
-      end
+      player[:world_id] = world_id
+      Player.new(player)
     end
+    Player.import new_players, on_duplicate_key_update: {
+      conflict_target: %i[world_id external_id], colums: %i[name points rank]
+    }
     add_barbarian_player
     self
   end
