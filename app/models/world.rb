@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class World < ApplicationRecord
   belongs_to :master_server
   has_many :players
@@ -58,18 +60,18 @@ class World < ApplicationRecord
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
     new_villages = GetVillages.new(client).execute
+    world_id = id
     return nil if new_villages.nil?
 
-    new_villages.each do |village|
+    new_villages.map! do |village|
       village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id
+      village[:world_id] = world_id
       village.delete(:rank)
-      old = villages.find_by(external_id: village[:external_id])
-      if old
-        villages.update(old.id, village)
-      else
-        villages.create!(village)
-      end
+      Village.new(village)
     end
+    Village.import new_villages, on_duplicate_key_update: {
+      conflict_target: %i[world_id external_id], columns: %i[owner_id points name]
+    }
     self
   end
 
@@ -77,7 +79,7 @@ class World < ApplicationRecord
 
   def add_barbarian_player
     return if players.find_by(external_id: 0)
-    
+
     players.create!(name: 'Barbarian', external_id: 0, points: 0, rank: 0)
   end
 end
