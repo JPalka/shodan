@@ -68,10 +68,11 @@ class World < ApplicationRecord
   end
 
   def save_villages(new_villages)
-    new_villages.each do |village|
-      village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id
-      village[:world_id] = id
+    players_hash = build_players_hash
+    new_villages.map! do |village|
+      village[:owner_id] = players_hash[village.delete(:owner)]
       village.delete(:rank)
+      Village.new(village).tap { |vil| vil.world = self }
     end
     Village.import new_villages, on_duplicate_key_update: {
       conflict_target: %i[world_id external_id], columns: %i[owner_id points name]
@@ -80,6 +81,12 @@ class World < ApplicationRecord
   end
 
   private
+
+  def build_players_hash
+    players.each_with_object({}) do |player, hash|
+      hash[player.external_id] = player.id
+    end
+  end
 
   def add_barbarian_player
     return if players.find_by(external_id: 0)
