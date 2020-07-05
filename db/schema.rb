@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_04_181946) do
+ActiveRecord::Schema.define(version: 2020_07_05_173631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,9 +41,24 @@ ActiveRecord::Schema.define(version: 2020_07_04_181946) do
     t.bigint "account_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "tribe_id"
     t.index ["account_id"], name: "index_players_on_account_id"
+    t.index ["tribe_id"], name: "index_players_on_tribe_id"
     t.index ["world_id", "external_id"], name: "index_players_on_world_id_and_external_id", unique: true
     t.index ["world_id"], name: "index_players_on_world_id"
+  end
+
+  create_table "tribes", force: :cascade do |t|
+    t.integer "external_id"
+    t.bigint "world_id", null: false
+    t.string "name"
+    t.string "tag"
+    t.integer "points"
+    t.integer "rank"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["world_id", "external_id"], name: "index_tribes_on_world_id_and_external_id", unique: true
+    t.index ["world_id"], name: "index_tribes_on_world_id"
   end
 
   create_table "villages", force: :cascade do |t|
@@ -75,7 +90,9 @@ ActiveRecord::Schema.define(version: 2020_07_04_181946) do
 
   add_foreign_key "accounts", "master_servers"
   add_foreign_key "players", "accounts"
+  add_foreign_key "players", "tribes"
   add_foreign_key "players", "worlds"
+  add_foreign_key "tribes", "worlds"
   add_foreign_key "villages", "players", column: "owner_id"
   add_foreign_key "villages", "worlds"
   add_foreign_key "worlds", "master_servers"

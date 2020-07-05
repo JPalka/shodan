@@ -201,7 +201,7 @@ RSpec.describe World, type: :model do
          y_coord: 483,
          owner: 0,
          points: 1514,
-         rank: 0 }].clone
+         rank: 0 }]
     end
     let(:subject) { create(:world) }
 
