@@ -42,35 +42,41 @@ class World < ApplicationRecord
     new_players = GetPlayers.new(client).execute
     return nil if new_players.nil?
 
-    world_id = id
-    new_players.each do |player|
-      player.delete(:tribe_id)
-      player.delete(:village_count)
-      player[:world_id] = world_id
-    end
-    result = Player.import new_players, on_duplicate_key_update: {
-      conflict_target: %i[world_id external_id], colums: %i[name points rank]
-    }
-    add_barbarian_player
-    result
+    save_players(new_players.deep_dup)
   end
 
   def download_villages
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
     new_villages = GetVillages.new(client).execute
-    world_id = id
     return nil if new_villages.nil?
 
+    save_villages(new_villages.deep_dup)
+  end
+
+  def save_players(new_players)
+    new_players.each do |player|
+      player.delete(:tribe_id)
+      player.delete(:village_count)
+      player[:world_id] = id
+    end
+    Player.import new_players, on_duplicate_key_update: {
+      conflict_target: %i[world_id external_id], colums: %i[name points rank]
+    }
+    add_barbarian_player
+    true
+  end
+
+  def save_villages(new_villages)
     new_villages.each do |village|
       village[:owner_id] = players.find_by(external_id: village.delete(:owner)).id
-      village[:world_id] = world_id
+      village[:world_id] = id
       village.delete(:rank)
-      Village.new(village)
     end
     Village.import new_villages, on_duplicate_key_update: {
       conflict_target: %i[world_id external_id], columns: %i[owner_id points name]
     }
+    true
   end
 
   private

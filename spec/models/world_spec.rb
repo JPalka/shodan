@@ -201,15 +201,15 @@ RSpec.describe World, type: :model do
          y_coord: 483,
          owner: 0,
          points: 1514,
-         rank: 0 }]
+         rank: 0 }].clone
     end
     let(:subject) { create(:world) }
 
-    before do
+    before(:each) do
       allow(Tribes::Client).to receive(:new).and_return(client)
       allow(client).to receive(:change_world)
       allow(GetVillages).to receive(:new).and_return(villages_action)
-      allow(villages_action).to receive(:execute).and_return(villages)
+      allow(villages_action).to receive(:execute) { villages }
       create(:player, external_id: 8_061_098, world_id: subject.id)
       create(:player, external_id: 8_049_221, world_id: subject.id)
       create(:player, external_id: 0, world_id: subject.id)
@@ -220,6 +220,53 @@ RSpec.describe World, type: :model do
       it { expect(subject.villages.count).to eq(3) }
       it { expect(subject.villages.first.external_id).to eq(1) }
       it { expect(subject.villages.first.world_id).to eq(subject.id) }
+    end
+
+    context 'with existing villages' do
+      before { subject.download_villages }
+
+      context 'no data changes' do
+        it { expect(subject.villages.count).to eq(3) }
+        it { expect(subject.villages.first.external_id).to eq(1) }
+        it { expect(subject.villages.first.world_id).to eq(subject.id) }
+      end
+
+      context 'village data changes' do
+        let(:villages) do
+          [{ external_id: 1,
+             name: 'Sammie+C.',
+             x_coord: 496,
+             y_coord: 524,
+             owner: 0,
+             points: 3096,
+             rank: 0 },
+           { external_id: 2,
+             name: 'Mayham',
+             x_coord: 495,
+             y_coord: 528,
+             owner: 8_049_221,
+             points: 10_019,
+             rank: 0 },
+           { external_id: 3,
+             name: 'Barbarian+village',
+             x_coord: 515,
+             y_coord: 483,
+             owner: 0,
+             points: 1514,
+             rank: 0 },
+           { external_id: 4,
+             name: 'Barbarian+village2',
+             x_coord: 515,
+             y_coord: 483,
+             owner: 0,
+             points: 1514,
+             rank: 0 }]
+        end
+        it { expect(subject.villages.first.owner.external_id).to eq(0) }
+        it 'adds new village' do
+          expect(subject.villages.count).to eq(4)
+        end
+      end
     end
   end
 end
