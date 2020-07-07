@@ -114,7 +114,7 @@ RSpec.describe World, type: :model do
     let(:players) do
       [{ name: 'wannat8',
          external_id: 110_622,
-         tribe_id: 0,
+         tribe_id: 100,
          village_count: 1,
          points: 68,
          rank: 420 },
@@ -131,6 +131,8 @@ RSpec.describe World, type: :model do
       allow(client).to receive(:change_world)
       allow(GetPlayers).to receive(:new).and_return(players_action)
       allow(players_action).to receive(:execute).and_return(players)
+      create(:tribe, external_id: 100, world_id: subject.id)
+      create(:tribe, external_id: 1010, world_id: subject.id)
     end
 
     let(:subject) { create(:world) }
@@ -141,6 +143,7 @@ RSpec.describe World, type: :model do
       it { expect(subject.players.count).to eq(3) }
       it { expect(subject.players.first.external_id).to eq(110_622) }
       it { expect(subject.players.first.world_id).to eq(subject.id) }
+      it { expect(subject.players.first.tribe_id).to eq(subject.tribes.first.id) }
       it 'adds barbarian player' do
         expect(subject.players.find_by(external_id: 0)).to be_present
         expect(subject.players.find_by(external_id: 0).name).to eq('Barbarian')
@@ -160,7 +163,7 @@ RSpec.describe World, type: :model do
         let(:players) do
           [{ name: 'wannat8',
              external_id: 110_622,
-             tribe_id: 0,
+             tribe_id: 1010,
              village_count: 1,
              points: 500,
              rank: 420 },
@@ -174,6 +177,7 @@ RSpec.describe World, type: :model do
 
         it { expect(subject.players.first.points).to eq(500) }
         it { expect(subject.players.second.rank).to eq(300) }
+        it { expect(subject.players.first.tribe_id).to eq(subject.tribes.second.id) }
       end
     end
   end

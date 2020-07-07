@@ -75,13 +75,14 @@ class World < ApplicationRecord
   end
 
   def save_players(new_players)
+    tribes_hash = build_tribes_hash
     new_players.each do |player|
-      player.delete(:tribe_id)
+      player[:tribe_id] = tribes_hash[player.delete(:tribe_id)]
       player.delete(:village_count)
       player[:world_id] = id
     end
     Player.import new_players, on_duplicate_key_update: {
-      conflict_target: %i[world_id external_id], colums: %i[name points rank]
+      conflict_target: %i[world_id external_id], colums: %i[name points rank tribe_id]
     }
     add_barbarian_player
     true
@@ -105,6 +106,12 @@ class World < ApplicationRecord
   def build_players_hash
     players.each_with_object({}) do |player, hash|
       hash[player.external_id] = player.id
+    end
+  end
+
+  def build_tribes_hash
+    tribes.each_with_object({}) do |tribe, hash|
+      hash[tribe.external_id] = tribe.id
     end
   end
 
