@@ -4,6 +4,7 @@ class World < ApplicationRecord
   belongs_to :master_server
   has_many :players
   has_many :villages
+  has_many :tribes
 
   serialize :world_config
   serialize :unit_config
@@ -52,6 +53,25 @@ class World < ApplicationRecord
     return nil if new_villages.nil?
 
     save_villages(new_villages.deep_dup)
+  end
+
+  def download_tribes
+    client = Tribes::Client.new(master_server: master_server.link)
+    client.change_world('', world_url: link)
+    new_tribes = GetTribes.new(client).execute
+    return nil if new_tribes.nil?
+
+    save_tribes(new_tribes.deep_dup)
+  end
+
+  def save_tribes(new_tribes)
+    new_tribes.each do |tribe|
+      tribe[:world_id] = id
+    end
+    Tribe.import new_tribes, on_duplicate_key_update: {
+      conflict_target: %i[world_id external_id], columns: %i[name tag points rank]
+    }
+    true
   end
 
   def save_players(new_players)

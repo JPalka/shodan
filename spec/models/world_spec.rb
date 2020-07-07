@@ -6,6 +6,7 @@ RSpec.describe World, type: :model do
   it { is_expected.to belong_to(:master_server) }
   it { is_expected.to have_many(:players) }
   it { is_expected.to have_many(:villages) }
+  it { is_expected.to have_many(:tribes) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:master_server) }
@@ -265,6 +266,83 @@ RSpec.describe World, type: :model do
         it { expect(subject.villages.first.owner.external_id).to eq(0) }
         it 'adds new village' do
           expect(subject.villages.count).to eq(4)
+        end
+      end
+    end
+  end
+
+  describe '#download_tribes' do
+    let(:client) { double }
+    let(:tribes_action) { double }
+    let(:tribes) do
+      [{ external_id: 1,
+         name: 'Old+Skool',
+         tag: '.OS.',
+         points: 428_719,
+         rank: 33 },
+       { external_id: 2,
+         name: 'Four+Aces',
+         tag: '4A',
+         points: 1_344_920,
+         rank: 10 },
+       { external_id: 3,
+         name: 'Premium+Points+Only',
+         tag: 'PPO',
+         points: 40_307,
+         rank: 33 }]
+    end
+    let(:subject) { create(:world) }
+
+    before(:each) do
+      allow(Tribes::Client).to receive(:new).and_return(client)
+      allow(client).to receive(:change_world)
+      allow(GetTribes).to receive(:new).and_return(tribes_action)
+      allow(tribes_action).to receive(:execute).and_return(tribes)
+      subject.download_tribes
+    end
+
+    context 'no previous tribes exist' do
+      it { expect(subject.tribes.count).to eq(3) }
+      it { expect(subject.tribes.first.external_id).to eq(1) }
+      it { expect(subject.tribes.first.world_id).to eq(subject.id) }
+    end
+
+    context 'with existing tribes' do
+      before { subject.download_tribes }
+
+      context 'no data changes' do
+        it { expect(subject.tribes.count).to eq(3) }
+        it { expect(subject.tribes.first.external_id).to eq(1) }
+        it { expect(subject.tribes.first.world_id).to eq(subject.id) }
+      end
+
+      context 'tribe data changes' do
+        let(:tribes) do
+          [{ external_id: 1,
+             name: 'Old+Skool',
+             tag: '.OS.',
+             points: 100,
+             rank: 99 },
+           { external_id: 2,
+             name: 'Four+Aces',
+             tag: '4A',
+             points: 1_344_920,
+             rank: 10 },
+           { external_id: 3,
+             name: 'Premium+Points+Only',
+             tag: 'PPO',
+             points: 40_307,
+             rank: 33 },
+           { external_id: 90,
+             name: 'TRASH TRIBE',
+             tag: 'TT',
+             points: 10_000,
+             rank: 50 }]
+        end
+        it { expect(subject.tribes.first.points).to eq(100) }
+        it { expect(subject.tribes.first.rank).to eq(99) }
+        it 'adds new tribe' do
+          expect(subject.tribes.count).to eq(4)
         end
       end
     end
