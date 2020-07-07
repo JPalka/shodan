@@ -4,7 +4,7 @@ RSpec.describe GetBuildingConfig do
   let(:client) { double }
   let(:browser) { double }
   let(:subject) { described_class.new(client) }
-  let(:building_config) do
+  let(:input) do
     {:config=>
       {"xmlns"=>"",
        "main"=>
@@ -216,22 +216,7 @@ RSpec.describe GetBuildingConfig do
          "build_time"=>"1028.571429",
          "build_time_factor"=>"1.2"}}}
   end
-
-  describe '#execute' do
-    context 'command succeeds' do
-      before do
-        allow(client).to receive(:browser).and_return(browser)
-        allow(browser).to receive(:load_page)
-        allow(browser).to receive(:extract).and_return(building_config)
-      end 
-
-      it { expect(subject.execute).to eq(building_config[:config]) }
-    end
-
-    context 'command fails' do
-      before { allow(client).to receive(:browser).and_raise(Exception) }
-
-      it { expect(subject.execute).to eq(nil) }
-    end
-  end
+  
+  let(:expected_output) { input[:config] }
+  include_examples 'action'
 end

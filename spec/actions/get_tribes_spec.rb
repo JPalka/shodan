@@ -3,10 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe GetTribes do
-  let(:client) { double }
-  let(:browser) { double }
-  let(:subject) { described_class.new(client) }
-  let(:tribe_list) do
+  let(:input) do
     { tribes: [{ id: 1,
                  name: 'Old+Skool',
                  tag: '.OS.',
@@ -32,7 +29,7 @@ RSpec.describe GetTribes do
                  points: 40_307,
                  rank: 33 }] }
   end
-  let(:tribe_list_final) do
+  let(:expected_output) do
     [{ external_id: 1,
        name: 'Old+Skool',
        tag: '.OS.',
@@ -50,21 +47,5 @@ RSpec.describe GetTribes do
        rank: 33 }]
   end
 
-  describe '#execute' do
-    context 'command succeeds' do
-      before do
-        allow(client).to receive(:browser).and_return(browser)
-        allow(browser).to receive(:load_page)
-        allow(browser).to receive(:extract).and_return(tribe_list)
-      end
-
-      it { expect(subject.execute).to eq(tribe_list_final) }
-    end
-
-    context 'command fails' do
-      before { allow(client).to receive(:browser).and_raise(Exception) }
-
-      it { expect(subject.execute).to eq(nil) }
-    end
-  end
+  include_examples 'action'
 end

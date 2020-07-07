@@ -1,10 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GetUnitConfig do
-  let(:client) { double }
-  let(:browser) { double }
-  let(:subject) { described_class.new(client) }
-  let(:unit_config) do
+  let(:input) do
     {:config=>
       {"xmlns"=>"",
        "spear"=>
@@ -107,22 +104,7 @@ RSpec.describe GetUnitConfig do
          "defense_archer"=>"25",
          "carry"=>"0"}}}
   end
-
-  describe '#execute' do
-    context 'command succeeds' do
-      before do
-        allow(client).to receive(:browser).and_return(browser)
-        allow(browser).to receive(:load_page)
-        allow(browser).to receive(:extract).and_return(unit_config)
-      end 
-
-      it { expect(subject.execute).to eq(unit_config[:config]) }
-    end
-
-    context 'command fails' do
-      before { allow(client).to receive(:browser).and_raise(Exception) }
-
-      it { expect(subject.execute).to eq(nil) }
-    end
-  end
+  let(:expected_output) { input[:config] }
+  
+  include_examples 'action'
 end
