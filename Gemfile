@@ -27,6 +27,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'tribes', '~> 1', git: 'https://github.com/jpalka/tribes.git'
 gem 'activerecord-import'
+gem 'bunny'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
