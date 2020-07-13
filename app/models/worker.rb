@@ -5,6 +5,7 @@ require 'logger'
 class Worker
   include Concurrent::Async
   attr_reader :id
+
   def initialize(id)
     super()
     @id = id

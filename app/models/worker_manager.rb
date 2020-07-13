@@ -24,6 +24,9 @@ class WorkerManager
       @logger.warn "Worker not found: #{worker_id}"
     else
       victim.stop
+      @workers.delete(victim)
+      @logger.info "Deleted worker: #{worker_id}"
+      @logger.info "Active Workers: #{@workers.count}"
     end
   end
 
