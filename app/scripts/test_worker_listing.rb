@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-require 'bunny'
-require 'thread'
+# frozen_string_literal: true
 
+require 'bunny'
 class TestWorkerClient
   attr_accessor :call_id, :response, :lock, :condition, :connection,
                 :channel, :server_queue_name, :reply_queue, :exchange
@@ -19,7 +19,7 @@ class TestWorkerClient
 
   def call(action)
     @call_id = generate_uuid
-    body = {"action" => action}
+    body = { 'action' => action }
     exchange.publish(JSON.generate(body),
                      routing_key: server_queue_name,
                      correlation_id: call_id,
@@ -63,7 +63,7 @@ end
 client = TestWorkerClient.new('worker_manager')
 
 puts ' [x] Requesting worker list'
-response = client.call("list_workers")
+response = client.call('list_workers')
 
 puts " [.] Got #{response}"
 

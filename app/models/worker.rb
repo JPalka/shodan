@@ -19,7 +19,7 @@ class Worker
     @connection = Bunny.new(hostname: 'localhost')
     @connection.start
     @channel = @connection.create_channel
-    @queue = @channel.queue('worker', durable: false)
+    @queue = @channel.queue(id.to_s, durable: false)
     @consumer = @queue.subscribe(block: false) do |delivery_info, properties, body|
       @logger.info "Received message: #{body} - #{delivery_info} - #{properties}"
     end
