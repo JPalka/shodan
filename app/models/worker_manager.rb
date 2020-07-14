@@ -45,22 +45,26 @@ class WorkerManager
 
   def listen
     @logger.info 'Listening for messages...'
-    consumer = @queue.subscribe(block: false) do |delivery_info, properties, body|
-      @logger.info "Received message: #{body} - #{delivery_info} - #{properties}"
+    consumer = @queue.subscribe(block: false) do |delivery_info, props, body|
+      @logger.info "Received message: #{body} - #{delivery_info} - #{props}"
       body = JSON.parse(body)
       case body['action']
       when 'kill_yourself'
         @exit = true
         consumer.cancel
       when 'start_worker'
-        if [Worker, AI::Engine].include? body['worker_class'].safe_constantize
-          start_worker(body['worker_class'].constantize)
+        klass = body['worker_class'].safe_constantize
+        if [Worker, AI::Engine].include? klass
+          start_worker(klass)
         else
-          @logger.warn "Invalid worker class: #{body['worker_class']} - #{body['worker_class'].safe_constantize}"
+          @logger.warn "Invalid worker class: #{body['worker_class']} - #{klass}"
         end
       when 'stop_worker'
         stop_worker(body['worker_id'])
       when 'list_workers'
+        worker_list = @workers.empty? ? [] : @workers.map(&:id)
+        response = JSON.generate(worker_list)
+        @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
       else
         @logger.warn "Invalid action received: ${body['action']}"
       end
