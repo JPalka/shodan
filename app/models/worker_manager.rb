@@ -62,7 +62,11 @@ class WorkerManager
       when 'stop_worker'
         stop_worker(body['worker_id'])
       when 'list_workers'
-        worker_list = @workers.empty? ? [] : @workers.map(&:id)
+        worker_list = if @workers.empty?
+                        {}
+                      else
+                        @workers.each_with_object({}) { |worker, hash| hash[worker.id] = worker.class }
+                      end
         response = JSON.generate(worker_list)
         @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
       else
