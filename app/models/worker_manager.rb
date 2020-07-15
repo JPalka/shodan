@@ -23,11 +23,13 @@ class WorkerManager
     victim = @workers.find { |worker| worker.id == worker_id }
     if victim.nil?
       @logger.warn "Worker not found: #{worker_id}"
+      false
     else
       victim.stop
       @workers.delete(victim)
       @logger.info "Deleted worker: #{worker_id}"
       @logger.info "Active Workers: #{@workers.count}"
+      true
     end
   end
 
@@ -60,10 +62,18 @@ class WorkerManager
           @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
         else
           @logger.warn "Invalid worker class: #{body['worker_class']} - #{klass}"
-          @channel.default_exchange.publish('Invalid worker class', routing_key: props.reply_to, correlation_id: props.correlation_id)
+          @channel.default_exchange.publish(
+            'Invalid worker class',
+            routing_key: props.reply_to,
+            correlation_id: props.correlation_id
+          )
         end
       when 'stop_worker'
-        stop_worker(body['worker_id'])
+        @channel.default_exchange.publish(
+          stop_worker(body['worker_id']).to_s,
+          routing_key: props.reply_to,
+          correlation_id: props.correlation_id
+        )
       when 'list_workers'
         worker_list = if @workers.empty?
                         {}
