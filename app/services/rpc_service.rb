@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ListWorkers
+class RPCService
   attr_accessor :call_id, :response, :lock, :condition, :connection,
                 :channel, :server_queue_name, :reply_queue, :exchange
 
@@ -15,9 +15,10 @@ class ListWorkers
     setup_reply_queue
   end
 
-  def call()
+  def call(action, **args)
     @call_id = generate_uuid
-    body = { 'action' => 'list_workers' }
+    body = { 'action' => action }
+    body.merge!(args) if args
     exchange.publish(JSON.generate(body),
                      routing_key: server_queue_name,
                      correlation_id: call_id,

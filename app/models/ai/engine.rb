@@ -19,15 +19,12 @@ module AI
       @connection = Bunny.new(hostname: 'localhost')
       @connection.start
       @channel = @connection.create_channel
-      @queue = @channel.queue(id.to_s, durable: false)
-      @consumer = @queue.subscribe(block: false) do |delivery_info, properties, body|
-        @logger.info "Received message: #{body} - #{delivery_info} - #{properties}"
-      end
-      @logger.info('Worker listening for messages')
+      # Setup worker
+      @channel.default_exchange.publish({ 'action' => 'start_worker', 'worker_class' => 'Worker' }.to_json,
+                                        routing_key: 'worker_manager')
     end
 
     def stop
-      @consumer.cancel
       @connection.close
       @logger.info('AI stopped')
     end
