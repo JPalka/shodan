@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Accounts", type: :request do
+RSpec.describe 'Accounts', type: :request do
   let!(:master_server) { create(:master_server) }
   let!(:accounts) { create_list(:account, 5, master_server_id: master_server.id) }
 
@@ -101,6 +103,35 @@ RSpec.describe "Accounts", type: :request do
 
       it 'changes account data' do
         expect(account.reload.password).to eq(valid_data[:password])
+      end
+    end
+
+    context 'when setting active worlds' do
+      let!(:world) { create(:world, master_server_id: server_id) }
+      let(:account) { Account.find(id) }
+      context 'world exists' do
+        before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: [world.id] } }
+
+        it 'changes account data' do
+          expect(account.reload.active_worlds.ids).to eq([world.id])
+        end
+      end
+
+      context 'world does not exist' do
+        before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: [101_010_100_101] } }
+
+        it 'does not change account data' do
+          expect(account.reload.active_worlds.count).to eq(0)
+        end
+      end
+
+      context 'world exists but belongs to other server' do
+        let(:world) { create(:world) }
+        before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: world.id } }
+        
+        it 'does not change account data' do
+          expect(account.reload.active_worlds.count).to eq(0)
+        end
       end
     end
   end

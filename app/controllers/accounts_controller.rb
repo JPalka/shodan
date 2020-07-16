@@ -19,13 +19,14 @@ class AccountsController < ApplicationController
 
   def update
     @account.update(account_params)
+    # binding.pry
     head :no_content
   end
 
   private
 
   def account_params
-    params.permit(:login, :password, :email)
+    params.permit(:login, :password, :email, active_world_ids: [])
   end
 
   def set_account
