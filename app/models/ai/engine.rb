@@ -2,6 +2,7 @@
 
 module AI
   class Engine
+    include Concurrent::Async
     attr_reader :id
 
     def initialize(id)
@@ -19,14 +20,31 @@ module AI
       @connection = Bunny.new(hostname: 'localhost')
       @connection.start
       @channel = @connection.create_channel
-      # Setup worker
-      @channel.default_exchange.publish({ 'action' => 'start_worker', 'worker_class' => 'Worker' }.to_json,
-                                        routing_key: 'worker_manager')
+      async.start_ai_loop
     end
 
     def stop
       @connection.close
       @logger.info('AI stopped')
+    end
+
+    def start_ai_loop
+      setup_workers
+
+      @logger.info('Starting AI main loop')
+    end
+
+    def setup_workers
+      @logger.info('Setting up workers...')
+      # fetch accounts to be played
+      accounts = Account.all
+
+      # Setup 1 worker per account and map them to accounts
+      @workers = accounts.each_with_object({}) do |account, hash|
+        hash[account.id] = StartWorker.new('worker_manager').call('Worker')
+      end
+      @logger.info("Created workers for accounts: #{accounts.map(&:login)}")
+      true
     end
   end
 end
