@@ -12,8 +12,9 @@ class WorkerManager
     @workers = []
   end
 
-  def start_worker(worker)
-    temp = worker.new(SecureRandom.uuid)
+  def start_worker(worker, args = {})
+    puts(**args)
+    temp = worker.new(SecureRandom.uuid, args.symbolize_keys)
     temp.start
     @workers.push(temp)
     temp.id
@@ -58,7 +59,7 @@ class WorkerManager
       when 'start_worker'
         klass = body['worker_class'].safe_constantize
         if [Worker, AI::Engine].include? klass
-          response = start_worker(klass)
+          response = start_worker(klass, body['args'])
           @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
         else
           @logger.warn "Invalid worker class: #{body['worker_class']} - #{klass}"

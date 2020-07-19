@@ -5,7 +5,7 @@ module AI
     include Concurrent::Async
     attr_reader :id
 
-    def initialize(id)
+    def initialize(id, *)
       @id = id
       @logger = Logger.new(STDOUT)
       @logger.info!
@@ -41,7 +41,8 @@ module AI
 
       # Setup 1 worker per account and map them to accounts
       @workers = accounts.each_with_object({}) do |account, hash|
-        hash[account.id] = StartWorker.new('worker_manager').call('Worker')
+        hash[account.id] = StartWorker.new('worker_manager')
+                                      .call('Worker', account.login, account.password, account.master_server.link)
       end
       @logger.info("Created workers for accounts: #{accounts.map(&:login)}")
       true
