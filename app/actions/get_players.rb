@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GetPlayers
   def initialize(client)
     @client = client
@@ -10,7 +12,5 @@ class GetPlayers
       player[:external_id] = player.delete(:id)
     end
     players
-  rescue Exception => ex
-    nil
   end
 end

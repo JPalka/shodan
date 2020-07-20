@@ -14,7 +14,5 @@ class GetTribes
       tribe[:external_id] = tribe.delete(:id)
     end
     tribes
-  rescue Exception => e
-    nil
   end
 end

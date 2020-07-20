@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GetVillages
   def initialize(client)
     @client = client
@@ -14,7 +16,5 @@ class GetVillages
       village[:owner] = village.delete(:player_id)
     end
     villages
-  rescue Exception => ex
-    nil
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GetUnitConfig
   def initialize(client)
     @client = client
@@ -6,7 +8,5 @@ class GetUnitConfig
   def execute
     @client.browser.load_page 'unit_info'
     @client.browser.extract[:config]
-  rescue Exception => ex
-    nil
   end
 end
