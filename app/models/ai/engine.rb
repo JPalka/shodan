@@ -25,6 +25,7 @@ module AI
 
     def stop
       @connection.close
+      @main_loop.stop
       @logger.info('AI stopped')
     end
 
@@ -32,6 +33,8 @@ module AI
       setup_workers
 
       @logger.info('Starting AI main loop')
+      @main_loop = MainLoop.new(@workers)
+      @main_loop.start
     end
 
     def setup_workers
