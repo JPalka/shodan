@@ -17,24 +17,24 @@ module AI
 
     def start
       @logger.info('Starting AI engine...')
-      @connection = Bunny.new(hostname: 'localhost')
-      @connection.start
-      @channel = @connection.create_channel
       async.start_ai_loop
     end
 
     def stop
-      @connection.close
       @main_loop.stop
+      @task_dispatcher.destroy
       @logger.info('AI stopped')
     end
 
     def start_ai_loop
-      setup_workers
+      workers = setup_workers
+      @task_dispatcher = TaskDispacher.new(workers)
 
       @logger.info('Starting AI main loop')
-      @main_loop = MainLoop.new(@workers)
+      @main_loop = MainLoop.new(@task_dispatcher, Account.all)
       @main_loop.start
+    rescue Exception => ex
+      @logger.error("Wybiło szambo: #{ex}")
     end
 
     def setup_workers
@@ -43,12 +43,12 @@ module AI
       accounts = Account.all
 
       # Setup 1 worker per account and map them to accounts
-      @workers = accounts.each_with_object({}) do |account, hash|
+      workers = accounts.each_with_object({}) do |account, hash|
         hash[account.id] = StartWorker.new('worker_manager')
                                       .call('Worker', account.login, account.password, account.master_server.link)
       end
       @logger.info("Created workers for accounts: #{accounts.map(&:login)}")
-      true
+      workers
     end
   end
 end

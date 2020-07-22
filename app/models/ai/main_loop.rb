@@ -1,14 +1,23 @@
+# frozen_string_literal: true
+
 module AI
   class MainLoop
-    def initialize(workers)
-      @workers = workers
+    attr_reader :status
+
+    def initialize(task_dispatcher, accounts)
+      @task_dispatcher = task_dispatcher
+      @accounts = accounts
       @logger = Logger.new(STDOUT)
     end
 
     def start
       @status = 'running'
       @logger.info('Main loop started')
+      # @accounts.each do |account|
+      #   30.times { @task_dispatcher.send_task(account.id, 'testo tasko') }
+      # end
       while @status != 'stopped'
+        # @accounts.each { |account| @logger.info(@task_dispatcher.check_queue(@task_dispatcher.find_worker(account.id))) }
         sleep(1)
         if @status == 'stopping'
           @logger.info('Shutting down main loop')

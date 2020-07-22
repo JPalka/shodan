@@ -21,9 +21,13 @@ class Worker
     @connection = Bunny.new(hostname: 'localhost')
     @connection.start
     @channel = @connection.create_channel
+    # eat one crap at the time
+    @channel.prefetch(1, true)
     @queue = @channel.queue(id.to_s, durable: false, auto_delete: true)
-    @consumer = @queue.subscribe(block: false) do |delivery_info, properties, body|
+    @consumer = @queue.subscribe(block: false, manual_ack: true) do |delivery_info, properties, body|
       @logger.info "Received message: #{body} - #{delivery_info} - #{properties}"
+      sleep(5)
+      @channel.ack(delivery_info.delivery_tag)
     end
     @logger.info('Worker listening for messages')
   end
