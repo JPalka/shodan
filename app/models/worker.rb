@@ -28,6 +28,7 @@ class Worker
     @queue = @channel.queue(id.to_s, durable: false, auto_delete: true)
     @consumer = @queue.subscribe(block: false, manual_ack: true) do |delivery_info, properties, body|
       @logger.info "Received message: #{body} - #{delivery_info} - #{properties}"
+      handle_task(JSON.parse(body))
       sleep(5)
       @channel.ack(delivery_info.delivery_tag)
     end
@@ -38,5 +39,11 @@ class Worker
     @consumer.cancel
     @connection.close
     @logger.info('Worker stopped')
+  end
+
+  private
+
+  def handle_task(msg)
+    msg['task_class'].constantize.new(**msg['args']).execute(@client)
   end
 end
