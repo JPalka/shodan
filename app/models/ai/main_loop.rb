@@ -13,9 +13,10 @@ module AI
     def start
       @status = 'running'
       @logger.info('Main loop started')
-      # @accounts.each do |account|
-      #   30.times { @task_dispatcher.send_task(account.id, 'testo tasko') }
-      # end
+      # login ze accounts to game server
+      @accounts.each do |account|
+        @task_dispatcher.send_task(account.id, Tasks::Login.new)
+      end
       while @status != 'stopped'
         # @accounts.each { |account| @logger.info(@task_dispatcher.check_queue(@task_dispatcher.find_worker(account.id))) }
         sleep(1)

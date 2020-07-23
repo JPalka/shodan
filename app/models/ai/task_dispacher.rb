@@ -14,7 +14,7 @@ module AI
 
     def send_task(account_id, task)
       worker = find_worker(account_id)
-      @exchange.publish("TEST: #{task}", routing_key: worker)
+      @exchange.publish(task.serialize, routing_key: worker)
     end
 
     def find_worker(account_id)
