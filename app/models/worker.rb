@@ -6,13 +6,15 @@ class Worker
   include Concurrent::Async
   attr_reader :id
 
-  def initialize(id, login: nil, password: nil, master_server: nil)
+  def initialize(id, account_id:)
     super()
     @id = id
     @logger = Logger.new(STDOUT)
     @logger.info!
-    @logger.info("Worker params - login: #{login} - pass: #{password} - server: #{master_server}")
-    @client = Tribes::Client.new(login: login, password: password, master_server: master_server)
+    account = Account.find(account_id)
+    @account_id = account_id
+    @logger.info("Worker params - login: #{account.login} - pass: #{account.password} - server: #{account.master_server.link}")
+    @client = Tribes::Client.new(login: account.login, password: account.password, master_server: account.master_server.link)
     @logger.info("Created worker with uuid: #{@id}")
   end
 

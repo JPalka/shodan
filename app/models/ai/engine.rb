@@ -45,7 +45,7 @@ module AI
       # Setup 1 worker per account and map them to accounts
       workers = accounts.each_with_object({}) do |account, hash|
         hash[account.id] = StartWorker.new('worker_manager')
-                                      .call('Worker', account.login, account.password, account.master_server.link)
+                                      .call('Worker', account.id)
       end
       @logger.info("Created workers for accounts: #{accounts.map(&:login)}")
       workers
