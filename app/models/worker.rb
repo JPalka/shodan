@@ -11,10 +11,10 @@ class Worker
     @id = id
     @logger = Logger.new(STDOUT)
     @logger.info!
-    account = Account.find(account_id)
+    @account = Account.find(account_id)
     @account_id = account_id
-    @logger.info("Worker params - login: #{account.login} - pass: #{account.password} - server: #{account.master_server.link}")
-    @client = Tribes::Client.new(login: account.login, password: account.password, master_server: account.master_server.link)
+    @logger.info("Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}")
+    @client = Tribes::Client.new(login: @account.login, password: @account.password, master_server: @account.master_server.link)
     @logger.info("Created worker with uuid: #{@id}")
   end
 
@@ -44,6 +44,20 @@ class Worker
   private
 
   def handle_task(msg)
-    msg['task_class'].constantize.new(**msg['args']).execute(@client)
+    task = msg['task_class'].constantize.new(**msg['args'])
+    task.execute(@client)
+    save_task(task)
+  rescue Exception => e # rubocop:disable Lint/RescueException
+    save_task(task, e)
+  end
+
+  def save_task(task, error = nil)
+    task_hash = JSON.parse(task.serialize).symbolize_keys
+    TaskLog.create!(worker_id: @id,
+                    account: @account,
+                    task_class: task_hash[:task_class],
+                    status: task_hash[:status],
+                    error: error.to_s,
+                    args: task_hash[:args])
   end
 end

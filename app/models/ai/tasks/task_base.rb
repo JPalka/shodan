@@ -15,7 +15,14 @@ module AI
       def execute(client)
         raise(ArgumentError, 'Client cant be nil') if client.nil?
 
-        @status = do_task(client) ? 'finished' : 'failed'
+        begin
+          do_task(client)
+        rescue Exception => e # rubocop:disable Lint/RescueException
+          @status = 'failed'
+          raise e
+        else
+          @status = 'finished'
+        end
         delay
       end
 

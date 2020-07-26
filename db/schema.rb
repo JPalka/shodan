@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_26_105525) do
+ActiveRecord::Schema.define(version: 2020_07_26_134651) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_105525) do
   end
 
   create_table "task_logs", force: :cascade do |t|
-    t.integer "worker_id"
+    t.string "worker_id"
     t.bigint "account_id", null: false
     t.string "task_class"
     t.string "args"
