@@ -9,6 +9,7 @@ RSpec.shared_examples 'action' do
       before do
         allow(client).to receive(:worlds_global).and_return(input)
         allow(client).to receive(:browser).and_return(browser)
+        allow(client).to receive(:player_info).and_return(input)
         allow(browser).to receive(:load_page)
         allow(browser).to receive(:extract).and_return(input)
       end
