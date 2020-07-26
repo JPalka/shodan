@@ -7,6 +7,7 @@ class GetWorldConfig
 
   def execute
     @client.browser.load_page 'world_config'
+    sleep(1)
     @client.browser.extract[:config]
   end
 end

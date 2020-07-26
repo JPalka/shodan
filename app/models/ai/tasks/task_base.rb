@@ -6,16 +6,16 @@ module AI
       attr_reader :status
 
       def initialize(**args)
-        check_args
         # store arguments passed for easier serialization
         @args = args
         @status = 'pending'
       end
 
       def execute(client)
-        raise(ArgumentError, 'Client cant be nil') if client.nil?
-
         begin
+          raise(ArgumentError, 'Client cant be nil') if client.nil?
+
+          check_args
           do_task(client)
         rescue Exception => e # rubocop:disable Lint/RescueException
           @status = 'failed'

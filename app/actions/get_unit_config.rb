@@ -7,6 +7,7 @@ class GetUnitConfig
 
   def execute
     @client.browser.load_page 'unit_info'
+    sleep(1)
     @client.browser.extract[:config]
   end
 end

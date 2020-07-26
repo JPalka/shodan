@@ -7,6 +7,7 @@ class GetBuildingConfig
 
   def execute
     @client.browser.load_page 'building_info'
+    sleep(1)
     @client.browser.extract[:config]
   end
 end

@@ -7,7 +7,7 @@ class GetTribes
 
   def execute
     @client.browser.load_page 'tribe_list'
-    sleep(3)
+    sleep(5)
     tribes = @client.browser.extract[:tribes]
     tribes.each do |tribe|
       tribe.except!(:member_count, :village_count, :points_top)
