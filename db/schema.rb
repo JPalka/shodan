@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_16_110247) do
+ActiveRecord::Schema.define(version: 2020_07_26_105525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,18 @@ ActiveRecord::Schema.define(version: 2020_07_16_110247) do
     t.index ["tribe_id"], name: "index_players_on_tribe_id"
     t.index ["world_id", "external_id"], name: "index_players_on_world_id_and_external_id", unique: true
     t.index ["world_id"], name: "index_players_on_world_id"
+  end
+
+  create_table "task_logs", force: :cascade do |t|
+    t.integer "worker_id"
+    t.bigint "account_id", null: false
+    t.string "task_class"
+    t.string "args"
+    t.string "status"
+    t.string "error"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_task_logs_on_account_id"
   end
 
   create_table "tribes", force: :cascade do |t|
@@ -97,6 +109,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_110247) do
   add_foreign_key "players", "accounts"
   add_foreign_key "players", "tribes"
   add_foreign_key "players", "worlds"
+  add_foreign_key "task_logs", "accounts"
   add_foreign_key "tribes", "worlds"
   add_foreign_key "villages", "players", column: "owner_id"
   add_foreign_key "villages", "worlds"
