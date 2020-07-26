@@ -44,7 +44,7 @@ class Worker
   private
 
   def handle_task(msg)
-    task = msg['task_class'].constantize.new(**msg['args'])
+    task = msg['task_class'].constantize.new(**msg['args'].merge('account_id' => @account.id))
     task.execute(@client)
     save_task(task)
   rescue Exception => e # rubocop:disable Lint/RescueException
