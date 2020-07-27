@@ -29,9 +29,9 @@ module AI
     def start_ai_loop
       workers = setup_workers
       @task_dispatcher = TaskDispacher.new(workers)
-
+      @account_processor = AccountProcessor.new(@task_dispatcher)
       @logger.info('Starting AI main loop')
-      @main_loop = MainLoop.new(@task_dispatcher, Account.all)
+      @main_loop = MainLoop.new(@account_processor)
       @main_loop.start
     rescue Exception => ex
       @logger.error("Wybiło szambo: #{ex}")
