@@ -128,7 +128,7 @@ RSpec.describe 'Accounts', type: :request do
       context 'world exists but belongs to other server' do
         let(:world) { create(:world) }
         before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: world.id } }
-        
+
         it 'does not change account data' do
           expect(account.reload.active_worlds.count).to eq(0)
         end

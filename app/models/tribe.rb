@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Tribe < ApplicationRecord
   belongs_to :world
 

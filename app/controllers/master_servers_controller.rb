@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class MasterServersController < ApplicationController
-  before_action :set_server, only: [:show, :update]
+  before_action :set_server, only: %i[show update]
 
   def index
     json_response(MasterServer.all)

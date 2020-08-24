@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MasterServer < ApplicationRecord
   has_many :accounts
   has_many :worlds

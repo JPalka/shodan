@@ -11,6 +11,6 @@ response = client.call(id)
 puts " [.] Got #{response}"
 
 client = StopWorker.new('worker_manager')
-puts " Stopping nonexistant worker"
+puts ' Stopping nonexistant worker'
 response = client.call('bogus_id')
 puts " [.] Got #{response}"

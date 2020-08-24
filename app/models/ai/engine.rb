@@ -33,8 +33,8 @@ module AI
       @logger.info('Starting AI main loop')
       @main_loop = MainLoop.new(@account_processor)
       @main_loop.start
-    rescue Exception => ex
-      @logger.error("Wybiło szambo: #{ex}")
+    rescue Exception => e
+      @logger.error("Wybiło szambo: #{e}")
     end
 
     def setup_workers

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MasterServer, type: :model do
@@ -9,11 +11,11 @@ RSpec.describe MasterServer, type: :model do
   describe '#download_world_list' do
     let(:client) { double }
     let(:worlds) do
-      { "en107"=>"https://en107.tribalwars.net",
-        "en110"=>"https://en110.tribalwars.net",
-        "en111"=>"https://en111.tribalwars.net",
-        "en112"=>"https://en112.tribalwars.net",
-        "en113"=>"https://en113.tribalwars.net" }
+      { 'en107' => 'https://en107.tribalwars.net',
+        'en110' => 'https://en110.tribalwars.net',
+        'en111' => 'https://en111.tribalwars.net',
+        'en112' => 'https://en112.tribalwars.net',
+        'en113' => 'https://en113.tribalwars.net' }
     end
 
     before do
@@ -24,7 +26,7 @@ RSpec.describe MasterServer, type: :model do
     context 'master server exists' do
       let(:subject) { create(:master_server) }
 
-      it { expect{subject.download_world_list}.to change{subject.worlds.count}.from(0).to(worlds.count) }
+      it { expect { subject.download_world_list }.to change { subject.worlds.count }.from(0).to(worlds.count) }
     end
   end
 end

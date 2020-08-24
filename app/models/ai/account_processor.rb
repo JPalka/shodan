@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AI
   # Processes 'turn' for accounts
   class AccountProcessor

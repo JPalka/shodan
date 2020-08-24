@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "MasterServers", type: :request do
+RSpec.describe 'MasterServers', type: :request do
   let!(:master_servers) { create_list(:master_server, 15) }
   let(:master_server_id) { master_servers.first.id }
 

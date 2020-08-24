@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Worlds", type: :request do
+RSpec.describe 'Worlds', type: :request do
   let!(:master_server) { create(:master_server) }
   let!(:worlds) { create_list(:world, 5, master_server_id: master_server.id) }
 

@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe TribalwarsPasswordValidator do
   before do
-    stub_const("Validatable", Class.new).class_eval do
+    stub_const('Validatable', Class.new).class_eval do
       include ActiveModel::Validations
       attr_accessor :password
 

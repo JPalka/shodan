@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :world do
-    name { "MyString" }
-    link { "MyString" }
+    name { 'MyString' }
+    link { 'MyString' }
     master_server
 
     factory :world_with_players do

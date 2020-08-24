@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/support/request_spec_helper
 module RequestSpecHelper
   def json

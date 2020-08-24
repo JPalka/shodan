@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # validates password with the rules tribalwars uses
 class TribalwarsPasswordValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
