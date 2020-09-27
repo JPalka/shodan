@@ -21,17 +21,7 @@ class WorkerManager
   end
 
   def stop_worker(worker_id)
-    victim = @workers.find { |worker| worker.id == worker_id }
-    if victim.nil?
-      @logger.warn "Worker not found: #{worker_id}"
-      false
-    else
-      victim.stop
-      @workers.delete(victim)
-      @logger.info "Deleted worker: #{worker_id}"
-      @logger.info "Active Workers: #{@workers.count}"
-      true
-    end
+    @workers.delete_if { |worker| worker.id == worker_id }
   end
 
   def run
@@ -45,47 +35,54 @@ class WorkerManager
     end
   end
 
+  def stop
+    @exit = true
+  end
+
   private
 
   def listen
     @logger.info 'Listening for messages...'
-    consumer = @queue.subscribe(block: false) do |delivery_info, props, body|
+    @queue.subscribe(block: false) do |delivery_info, props, body|
       @logger.info "Received message: #{body} - #{delivery_info} - #{props}"
       body = JSON.parse(body)
-      case body['action']
-      when 'kill_yourself'
-        @exit = true
-        consumer.cancel
-      when 'start_worker'
-        klass = body['worker_class'].safe_constantize
-        if [Worker, AI::Engine].include? klass
-          response = start_worker(klass, body['args'])
-          @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
-        else
-          @logger.warn "Invalid worker class: #{body['worker_class']} - #{klass}"
-          @channel.default_exchange.publish(
-            'Invalid worker class',
-            routing_key: props.reply_to,
-            correlation_id: props.correlation_id
-          )
-        end
-      when 'stop_worker'
-        @channel.default_exchange.publish(
-          stop_worker(body['worker_id']).to_s,
-          routing_key: props.reply_to,
-          correlation_id: props.correlation_id
-        )
-      when 'list_workers'
-        worker_list = if @workers.empty?
-                        {}
-                      else
-                        @workers.each_with_object({}) { |worker, hash| hash[worker.id] = worker.class }
-                      end
-        response = JSON.generate(worker_list)
-        @channel.default_exchange.publish(response, routing_key: props.reply_to, correlation_id: props.correlation_id)
-      else
-        @logger.warn "Invalid action received: ${body['action']}"
-      end
+      exchange.publish(
+        handle_message(body: body),
+        routing_key: props.reply_to,
+        correlation_id: props.correlation_id
+      )
     end
   end
+
+  def worker_list
+    worker_list = @workers.each_with_object({}) { |worker, hash| hash[worker.id] = worker.class }
+    JSON.generate(worker_list)
+  end
+
+  def exchange
+    @channel.default_exchange
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def handle_message(body:)
+    case body['action']
+    when 'start_worker'
+      worker_class = body['worker_class']
+      klass = worker_class.safe_constantize
+      if [Worker, AI::Engine].include? klass
+        start_worker(klass, body['args'])
+      else
+        @logger.warn "Invalid worker class: #{worker_class} - #{klass}"
+        'Invalid worker class'
+      end
+    when 'stop_worker'
+      stop_worker(body['worker_id']).to_s
+    when 'list_workers'
+      worker_list
+    else
+      @logger.warn "Invalid action received: ${body['action']}"
+      'Invalid action'
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
 end
