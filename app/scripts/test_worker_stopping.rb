@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
-client = StartWorker.new('worker_manager')
-id = client.call('Worker')
-
-client = StopWorker.new('worker_manager')
+service = WorkerManagerService.new('worker_manager')
+id = service.create_worker
 
 puts " [x] Stopping worker #{id}"
-response = client.call(id)
+response = service.stop_worker(worker_id: id)
 
 puts " [.] Got #{response}"
 
-client = StopWorker.new('worker_manager')
 puts ' Stopping nonexistant worker'
-response = client.call('bogus_id')
+response = service.stop_worker(worker_id: 'bogus_id')
 puts " [.] Got #{response}"

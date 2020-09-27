@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-# puts ' [x] Starting worker'
-# client = StartWorker.new('worker_manager')
-# response = client.call('Worker')
-# puts " [.] Got #{response}"
-
 puts ' [x] Starting AI'
-client = StartWorker.new('worker_manager')
-response = client.call('AI::Engine')
+service = WorkerManagerService.new('worker_manager')
+response = service.create_worker('AI::Engine', nil)
 puts " [.] Got #{response}"
