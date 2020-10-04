@@ -9,7 +9,7 @@ module AI
       private
 
       def do_task(client)
-        ::Login.new(client).execute
+        GameActionsService.new(client).login
         true
       end
     end

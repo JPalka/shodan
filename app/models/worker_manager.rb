@@ -12,9 +12,9 @@ class WorkerManager
     @workers = []
   end
 
-  def start_worker(worker, args = {})
-    puts(**args)
-    temp = worker.new(SecureRandom.uuid, args.symbolize_keys)
+  def start_worker(player_id)
+    @logger.warn("player id: #{player_id}")
+    temp = AI::Engine.new(SecureRandom.uuid, player_id: player_id)
     temp.start
     @workers.push(temp)
     temp.id
@@ -55,8 +55,7 @@ class WorkerManager
   end
 
   def worker_list
-    worker_list = @workers.each_with_object({}) { |worker, hash| hash[worker.id] = worker.class }
-    JSON.generate(worker_list)
+    JSON.generate(@workers.map(&:id))
   end
 
   def exchange
@@ -67,14 +66,7 @@ class WorkerManager
   def handle_message(body:)
     case body['action']
     when 'start_worker'
-      worker_class = body['worker_class']
-      klass = worker_class.safe_constantize
-      if [Worker, AI::Engine].include? klass
-        start_worker(klass, body['args'])
-      else
-        @logger.warn "Invalid worker class: #{worker_class} - #{klass}"
-        'Invalid worker class'
-      end
+      start_worker(body['player_id'])
     when 'stop_worker'
       stop_worker(body['worker_id']).to_s
     when 'list_workers'

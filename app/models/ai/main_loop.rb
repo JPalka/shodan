@@ -4,17 +4,17 @@ module AI
   class MainLoop
     attr_reader :status
 
-    def initialize(account_processor)
-      @account_processor = account_processor
+    def initialize(player_processor)
+      @player_processor = player_processor
       @logger = Logger.new(STDOUT)
+      @status = 'stopped'
     end
 
     def start
       @status = 'running'
       @logger.info('Main loop started')
-      @account_processor.initialize_accounts
+      @player_processor.initialize_player
       while @status != 'stopped'
-        # @accounts.each { |account| @logger.info(@task_dispatcher.check_queue(@task_dispatcher.find_worker(account.id))) }
         sleep(1)
         if @status == 'stopping'
           @logger.info('Shutting down main loop')

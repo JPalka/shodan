@@ -9,8 +9,8 @@ class WorkerManagerService
     service.call('list_workers', args: {})
   end
 
-  def create_worker(worker_class: AI::Engine, account_id: nil)
-    service.call('start_worker', worker_class: worker_class, args: { account_id: account_id })
+  def create_worker(player_id)
+    service.call('start_worker', player_id: player_id)
   end
 
   def stop_worker(worker_id:)

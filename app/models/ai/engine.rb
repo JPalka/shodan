@@ -5,18 +5,22 @@ module AI
     include Concurrent::Async
     attr_reader :id
 
-    def initialize(id, *)
+    def initialize(id, player_id:)
       @id = id
       @logger = Logger.new(STDOUT)
       @logger.info!
       @logger.formatter = proc do |severity, datetime, _progname, msg|
         "#{severity}, ai-#{id} #{datetime}: - #{msg}\n"
       end
-      @logger.info("Created worker-ai with uuid: #{@id}")
+      @logger.info("PLAYER ID: #{player_id}")
+      @player = Player.find(player_id)
+      @logger.info("Created ai with uuid: #{@id} for player id #{@player.id}")
     end
 
     def start
       @logger.info('Starting AI engine...')
+      @task_dispatcher = TaskDispatcher.new(setup_worker)
+      @player_processor = PlayerProcessor.new(@task_dispatcher, @player)
       async.start_ai_loop
     end
 
@@ -27,28 +31,19 @@ module AI
     end
 
     def start_ai_loop
-      workers = setup_workers
-      @task_dispatcher = TaskDispacher.new(workers)
-      @account_processor = AccountProcessor.new(@task_dispatcher)
       @logger.info('Starting AI main loop')
-      @main_loop = MainLoop.new(@account_processor)
+      @main_loop = MainLoop.new(@player_processor)
       @main_loop.start
     rescue Exception => e
       @logger.error("Wybiło szambo: #{e}")
+      WorkerManagerService.new('worker_manager').stop_worker(id)
     end
 
-    def setup_workers
-      @logger.info('Setting up workers...')
-      # fetch accounts to be played
-      accounts = Account.all
-
-      # Setup 1 worker per account and map them to accounts
-      workers = accounts.each_with_object({}) do |account, hash|
-        hash[account.id] = StartWorker.new('worker_manager')
-                                      .call('Worker', account.id)
-      end
-      @logger.info("Created workers for accounts: #{accounts.map(&:login)}")
-      workers
+    def setup_worker
+      @logger.info('Setting up worker...')
+      worker = Worker.new(@id, player: @player)
+      @logger.info("Created worker for account: #{@player.account.login}")
+      worker
     end
   end
 end
