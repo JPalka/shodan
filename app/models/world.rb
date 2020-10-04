@@ -29,6 +29,16 @@ class World < ApplicationRecord
     self
   end
 
+  # :reek:FeatureEnvy :reek:DuplicateMethodCall
+  def add_player(**params)
+    players.where(external_id: params['player_id'].to_i)
+           .first_or_create do |player|
+             player.name = params['name']
+             player.external_id = params['player_id'].to_i
+             player.account = Account.find(params['account_id'])
+           end
+  end
+
   def player_count
     players.count
   end

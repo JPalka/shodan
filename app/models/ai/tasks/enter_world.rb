@@ -16,18 +16,9 @@ module AI
 
       def do_task(client)
         game_service = GameActionsService.new(client)
-        game_service.enter_world(@args[:world_name])
-
-        player_info = game_service.player_info
         world = World.find_by(name: @args[:world_name])
-        # create player if its not found in local db for whatever reason
-        unless player = world.players.find_by(external_id: player_info['player_id'].to_i)
-          binding.pry
-          player = Player.new(world: world, name: player_info['name'], external_id: player_info['player_id'].to_i)
-        end
-
-        player.account = Account.find(@args[:account_id])
-        player.save!
+        game_service.enter_world(world.name)
+        world.add_player(**game_service.player_info, account_id: @args[:account_id])
         true
       end
     end
