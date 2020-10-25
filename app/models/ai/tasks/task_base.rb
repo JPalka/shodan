@@ -12,9 +12,9 @@ module AI
       end
 
       def execute(client)
-        begin
-          raise(ArgumentError, 'Client cant be nil') if client.nil?
+        raise(ArgumentError, 'Client cant be nil') if client.nil?
 
+        begin
           check_args
           do_task(client)
         rescue Exception => e # rubocop:disable Lint/RescueException

@@ -42,6 +42,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers', '~> 4.0'
   gem 'simplecov'
+  gem 'timecop'
 end
 
 group :development do

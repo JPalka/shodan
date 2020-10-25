@@ -12,7 +12,6 @@ module AI
       @logger.formatter = proc do |severity, datetime, _progname, msg|
         "#{severity}, ai-#{id} #{datetime}: - #{msg}\n"
       end
-      @logger.info("PLAYER ID: #{player_id}")
       @player = Player.find(player_id)
       @logger.info("Created ai with uuid: #{@id} for player id #{@player.id}")
     end
@@ -20,7 +19,7 @@ module AI
     def start
       @logger.info('Starting AI engine...')
       @task_dispatcher = TaskDispatcher.new(setup_worker)
-      @player_processor = PlayerProcessor.new(@task_dispatcher, @player)
+      @player_processor = PlayerProcessor.new(@task_dispatcher, @player, managers)
       async.start_ai_loop
     end
 
@@ -39,11 +38,17 @@ module AI
       WorkerManagerService.new('worker_manager').stop_worker(id)
     end
 
+    private
+
     def setup_worker
       @logger.info('Setting up worker...')
       worker = Worker.new(@id, player: @player)
       @logger.info("Created worker for account: #{@player.account.login}")
       worker
+    end
+
+    def managers
+      [Managers::Data.new]
     end
   end
 end

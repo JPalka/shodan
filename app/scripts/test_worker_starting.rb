@@ -2,5 +2,5 @@
 
 puts ' [x] Starting AI'
 service = WorkerManagerService.new('worker_manager')
-response = service.create_worker(29708)
+response = service.create_worker(11524178)
 puts " [.] Got #{response}"
