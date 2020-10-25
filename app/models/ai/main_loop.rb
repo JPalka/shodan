@@ -13,9 +13,9 @@ module AI
     def start
       @status = 'running'
       @logger.info('Main loop started')
-      @player_processor.initialize_player
       while @status != 'stopped'
-        sleep(1)
+        @player_processor.process_player_turn
+        sleep(5)
         if @status == 'stopping'
           @logger.info('Shutting down main loop')
           initiate_shutdown

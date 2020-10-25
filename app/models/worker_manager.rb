@@ -12,9 +12,9 @@ class WorkerManager
     @workers = []
   end
 
-  def start_worker(player_id)
-    @logger.warn("player id: #{player_id}")
-    temp = AI::Engine.new(SecureRandom.uuid, player_id: player_id)
+  def start_worker(account_id)
+    @logger.warn("account id: #{account_id}")
+    temp = AI::Engine.new(SecureRandom.uuid, account_id: account_id)
     temp.start
     @workers.push(temp)
     temp.id
@@ -66,7 +66,7 @@ class WorkerManager
   def handle_message(body:)
     case body['action']
     when 'start_worker'
-      start_worker(body['player_id'])
+      start_worker(body['account_id'])
     when 'stop_worker'
       stop_worker(body['worker_id']).to_s
     when 'list_workers'

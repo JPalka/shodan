@@ -6,17 +6,16 @@ module AI
   class Worker
     attr_reader :id
 
-    def initialize(id, player:)
+    def initialize(id, account:)
       @id = id
       @logger = Logger.new(STDOUT)
       @logger.info!
-      @player = player
-      @account = @player.account
+      @account = account
       # @logger.info("Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}")
       @client = Tribes::Client.new(
-        login: @account.login,
-        password: @account.password,
-        master_server: @account.master_server.link
+        login: account.login,
+        password: account.password,
+        master_server: account.master_server.link
       )
       @logger.info("Created worker with uuid: #{@id}")
     end

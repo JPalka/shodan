@@ -9,8 +9,8 @@ class WorkerManagerService
     service.call('list_workers', args: {})
   end
 
-  def create_worker(player_id)
-    service.call('start_worker', player_id: player_id)
+  def create_worker(account_id)
+    service.call('start_worker', account_id: account_id)
   end
 
   def stop_worker(worker_id:)

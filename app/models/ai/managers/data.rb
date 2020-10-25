@@ -14,7 +14,7 @@ module AI
 
         world = player.world.name
         # check when world data was last updated
-        last_update = TaskLog.finished.order(created_at: :desc).select do |task|
+        last_update = TaskLog.finished.where(task_class: 'AI::Tasks::GetWorldData').order(created_at: :desc).select do |task|
           task.args['world_name'] == world
         end.first&.created_at
 
