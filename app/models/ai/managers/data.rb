@@ -8,19 +8,18 @@ module AI
       end
 
       def process(player)
-        # get data needed to make decision
-        #
-        # return array of tasks or something
-
+        player.reload
         world = player.world.name
         # check when world data was last updated
         last_update = TaskLog.finished.where(task_class: 'AI::Tasks::GetWorldData').order(created_at: :desc).select do |task|
           task.args['world_name'] == world
         end.first&.created_at
 
-        return [Tasks::GetWorldData.new(world_name: world)] if update?(last_update)
+        tasks = []
+        tasks << Tasks::GetWorldData.new(world_name: world) if update?(last_update)
 
-        []
+        tasks << Tasks::GetWorldConfigs.new(world_name: world) unless player.world.config_present?
+        tasks
       end
 
       private

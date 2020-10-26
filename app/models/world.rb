@@ -29,6 +29,10 @@ class World < ApplicationRecord
     self
   end
 
+  def config_present?
+    world_config? && unit_config? && building_config?
+  end
+
   # :reek:FeatureEnvy :reek:DuplicateMethodCall
   def add_player(**params)
     players.where(external_id: params['player_id'].to_i)
