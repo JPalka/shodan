@@ -3,12 +3,13 @@
 module AI
   # Processes 'turn' for player
   class PlayerProcessor
-    def initialize(task_dispatcher, account, managers)
+    def initialize(task_dispatcher, account, managers, logger: Logger.new(STDOUT))
       @task_dispatcher = task_dispatcher
       @account = account
       initialize_account
       @player = account.active_worlds.first.players.find_by(account_id: account.id)
       @managers = managers
+      @logger = logger
     end
 
     def process_player_turn

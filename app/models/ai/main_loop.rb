@@ -4,9 +4,9 @@ module AI
   class MainLoop
     attr_reader :status
 
-    def initialize(player_processor)
+    def initialize(player_processor, logger: Logger.new(STDOUT))
       @player_processor = player_processor
-      @logger = Logger.new(STDOUT)
+      @logger = logger
       @status = 'stopped'
     end
 

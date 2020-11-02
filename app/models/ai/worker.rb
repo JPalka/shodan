@@ -6,12 +6,11 @@ module AI
   class Worker
     attr_reader :id
 
-    def initialize(id, account:)
+    def initialize(id, account:, logger: Logger.new(STDOUT))
       @id = id
-      @logger = Logger.new(STDOUT)
-      @logger.info!
+      @logger = logger
       @account = account
-      # @logger.info("Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}")
+      @logger.debug("Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}")
       @client = Tribes::Client.new(
         login: account.login,
         password: account.password,
