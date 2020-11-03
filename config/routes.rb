@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   resources :worlds, only: [:show] do
     resources :players
   end
+
+  resources :logs
 end
