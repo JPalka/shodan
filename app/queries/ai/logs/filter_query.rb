@@ -10,12 +10,14 @@ module AI
         @params = params.to_h.compact
 
         @severity = @params.delete(:severity)
+        @page = @params.delete(:page)
+        @per_page = @params.delete(:per_page)
       end
 
       def call
         result = @scope.where(@params)
         result = filter(result)
-        order(result)
+        [paginate(order(result)), result.count]
       end
 
       private
@@ -27,6 +29,10 @@ module AI
       def filter(scope)
         final_filter = method(:filter_by_severity)
         final_filter.call(scope)
+      end
+
+      def paginate(scope)
+        scope.page(@page || 1).per(@per_page || 10)
       end
 
       def filter_by_severity(scope)

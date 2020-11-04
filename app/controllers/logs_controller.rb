@@ -12,6 +12,6 @@ class LogsController < ApplicationController
   private
 
   def logs_params
-    params.permit(severity: [])
+    params.permit(:page, :per_page, severity: [])
   end
 end
