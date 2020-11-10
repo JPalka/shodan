@@ -8,8 +8,7 @@ RSpec.describe AI::Managers::Data, type: :model do
       manager = AI::Managers::Data.new
       player = create(:player)
 
-      expect(manager.process(player).count).to eq(1)
-      expect(manager.process(player).first.class).to eq AI::Tasks::GetWorldData
+      expect(manager.process(player).map(&:class)).to include(AI::Tasks::GetWorldData)
     end
 
     it 'updates world data if it was not updated in last x minutes' do
@@ -19,8 +18,7 @@ RSpec.describe AI::Managers::Data, type: :model do
 
       Timecop.freeze(DateTime.now + 1.minute) do
         create(:task_log, task_class: 'AI::Tasks::GetWorldData', status: 'failed', args: { 'world_name' => player.world.name })
-        expect(manager.process(player).count).to eq(1)
-        expect(manager.process(player).first.class).to eq AI::Tasks::GetWorldData
+        expect(manager.process(player).map(&:class)).to include(AI::Tasks::GetWorldData)
       end
     end
 
@@ -35,7 +33,7 @@ RSpec.describe AI::Managers::Data, type: :model do
       )
 
       Timecop.freeze(DateTime.now) do
-        expect(manager.process(player).count).to eq(0)
+        expect(manager.process(player).map(&:class)).not_to include(AI::Tasks::GetWorldData)
       end
     end
   end

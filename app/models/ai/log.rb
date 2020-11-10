@@ -24,6 +24,5 @@ module AI
     def self.close; end
 
     def self.reopen(_log = nil); end
-
   end
 end

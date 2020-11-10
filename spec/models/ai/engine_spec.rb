@@ -8,15 +8,15 @@ RSpec.describe AI::Engine, type: :model do
       account = create(:account)
       create(:player, account: account, id: 1)
 
-      expect { AI::Engine.new('id', player_id: 9090) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { AI::Engine.new('id', account_id: account.id + 1) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
   describe '#start' do
     it 'does not crap out when everything is ok. what a garbage test description' do
       account = create(:account)
-      player = create(:player, account: account)
-      engine = build(:engine, player: player)
+      create(:player, account: account)
+      engine = build(:engine, account: account)
 
       expect { engine.start }.not_to raise_error
     end

@@ -7,5 +7,6 @@ FactoryBot.define do
     master_server
     premium_points { nil }
     email { Faker::Internet.email }
+    active_worlds { [create(:world, master_server: master_server)] }
   end
 end

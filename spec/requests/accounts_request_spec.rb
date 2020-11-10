@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Accounts', type: :request do
   let!(:master_server) { create(:master_server) }
-  let!(:accounts) { create_list(:account, 5, master_server_id: master_server.id) }
+  let!(:accounts) { create_list(:account, 5, master_server: master_server) }
 
   let(:server_id) { master_server.id }
   let(:id) { accounts.first.id }
