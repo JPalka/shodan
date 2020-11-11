@@ -19,7 +19,6 @@ class AccountsController < ApplicationController
 
   def update
     @account.update(account_params)
-    # binding.pry
     head :no_content
   end
 

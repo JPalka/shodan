@@ -121,7 +121,7 @@ RSpec.describe 'Accounts', type: :request do
         before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: [101_010_100_101] } }
 
         it 'does not change account data' do
-          expect(account.reload.active_worlds.count).to eq(0)
+          expect(account.reload.active_worlds).not_to include(101_010_100_101)
         end
       end
 
@@ -130,7 +130,7 @@ RSpec.describe 'Accounts', type: :request do
         before { put "/master_servers/#{server_id}/accounts/#{id}", params: { active_world_ids: world.id } }
 
         it 'does not change account data' do
-          expect(account.reload.active_worlds.count).to eq(0)
+          expect(account.reload.active_worlds).not_to include(world.id)
         end
       end
     end
