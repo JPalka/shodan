@@ -8,8 +8,8 @@ class MasterServer < ApplicationRecord
 
   def download_world_list
     client = Tribes::Client.new(master_server: link)
-    action = GetWorldListGlobal.new(client)
-    new_worlds = action.execute
+    service = GameActionsService.new(client)
+    new_worlds = service.world_list_global
     return nil if new_worlds.nil?
 
     new_worlds.each do |key, value|
