@@ -3,12 +3,14 @@
 class WorkerManager
   attr_reader :workers
 
+  MESSAGE_TIMEOUT_MS = 20000
+
   def initialize
     @logger = Logger.new(STDOUT)
     @connection = Bunny.new(hostname: 'localhost')
     @connection.start
     @channel = @connection.create_channel
-    @queue = @channel.queue('worker_manager')
+    @queue = @channel.queue('worker_manager', :arguments => {"x-message-ttl" => MESSAGE_TIMEOUT_MS})
     @workers = []
   end
 

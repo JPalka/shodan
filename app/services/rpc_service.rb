@@ -25,7 +25,7 @@ class RPCService
                      reply_to: reply_queue.name)
 
     # wait for the signal to continue the execution
-    lock.synchronize { condition.wait(lock) }
+    lock.synchronize { condition.wait(lock, WorkerManager::MESSAGE_TIMEOUT_MS / 1000) }
     stop
     response
   end

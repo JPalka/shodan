@@ -9,7 +9,9 @@ class AccountsController < ApplicationController
   end
 
   def show
-    json_response(@account)
+    json_response(@account, :ok, extra_methods: [
+      :active_world_ids
+    ])
   end
 
   def create
