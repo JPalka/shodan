@@ -7,13 +7,14 @@ RSpec.describe GameActionsService do
     context 'world exists on remote' do
       it 'enters the world' do
         expected_response = eval(file_fixture('world_login.hash').read)
+
         client = double
         allow(client).to receive(:browser)
         allow(client).to receive(:change_world).and_return(true)
         allow(client).to receive(:login_to_world).and_return(expected_response)
         service = GameActionsService.new(client)
 
-        expect(GameActionsService.new(client).enter_world('en115')).to eq(expected_response['result'])
+        expect(service.enter_world('en115')).to eq(expected_response['result'])
       end
     end
 

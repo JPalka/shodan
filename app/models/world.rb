@@ -17,13 +17,14 @@ class World < ApplicationRecord
   def initialize_configs
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
-    config = GetWorldConfig.new(client).execute
+    service = GameActionsService.new(client)
+    config = service.world_config
     self.world_config = config if config
 
-    unit = GetUnitConfig.new(client).execute
+    unit = service.unit_config
     self.unit_config = unit if unit
 
-    building = GetBuildingConfig.new(client).execute
+    building = service.building_config
     self.building_config = building if building
     save!
     self
@@ -54,7 +55,8 @@ class World < ApplicationRecord
   def download_players
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
-    new_players = GetPlayers.new(client).execute
+    service = GameActionsService.new(client)
+    new_players = service.players
     return nil if new_players.nil?
 
     save_players(new_players.deep_dup)
@@ -63,7 +65,8 @@ class World < ApplicationRecord
   def download_villages
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
-    new_villages = GetVillages.new(client).execute
+    service = GameActionsService.new(client)
+    new_villages = service.villages
     return nil if new_villages.nil?
 
     save_villages(new_villages.deep_dup)
@@ -72,7 +75,8 @@ class World < ApplicationRecord
   def download_tribes
     client = Tribes::Client.new(master_server: master_server.link)
     client.change_world('', world_url: link)
-    new_tribes = GetTribes.new(client).execute
+    service = GameActionsService.new(client)
+    new_tribes = service.tribes
     return nil if new_tribes.nil?
 
     save_tribes(new_tribes.deep_dup)

@@ -18,77 +18,81 @@ RSpec.describe World, type: :model do
 
   describe '#initialize_configs' do
     let(:client) { double }
-    let(:config_action) { double }
-    let(:unit_action) { double }
-    let(:building_action) { double }
+    let(:browser) { double }
+    let(:game_actions_service) { instance_double(GameActionsService) }
+    let(:world_config) do
+      {
+        'xmlns' => '',
+        'speed' => '3.5',
+        'unit_speed' => '0.57',
+        'moral' => '0',
+        'build' => { 'destroy' => '1' },
+        'misc' => { 'kill_ranking' => '2', 'tutorial' => '0', 'trade_cancel_time' => '300' },
+        'commands' => { 'millis_arrival' => '1', 'command_cancel_time' => '600' }
+      }
+    end
+    let(:unit_config) do
+      {
+        'xmlns' => '',
+        'spear' =>
+         { 'build_time' => '291.4285714',
+           'pop' => '1',
+           'speed' => '9.0225563920629',
+           'attack' => '10',
+           'defense' => '15',
+           'defense_cavalry' => '45',
+           'defense_archer' => '20',
+           'carry' => '25' },
+        'sword' =>
+         { 'build_time' => '428.5714286',
+           'pop' => '1',
+           'speed' => '11.027568924959',
+           'attack' => '25',
+           'defense' => '50',
+           'defense_cavalry' => '25',
+           'defense_archer' => '40',
+           'carry' => '15' }
+      }
+    end
+    let(:building_config) do
+      {
+        'xmlns' => '',
+        'main' =>
+         { 'max_level' => '30',
+           'min_level' => '1',
+           'wood' => '90',
+           'stone' => '80',
+           'iron' => '70',
+           'pop' => '5',
+           'wood_factor' => '1.26',
+           'stone_factor' => '1.275',
+           'iron_factor' => '1.26',
+           'pop_factor' => '1.17',
+           'build_time' => '257.1428571',
+           'build_time_factor' => '1.2' },
+        'barracks' =>
+         { 'max_level' => '25',
+           'min_level' => '0',
+           'wood' => '200',
+           'stone' => '170',
+           'iron' => '90',
+           'pop' => '7',
+           'wood_factor' => '1.26',
+           'stone_factor' => '1.28',
+           'iron_factor' => '1.26',
+           'pop_factor' => '1.17',
+           'build_time' => '514.2857143',
+           'build_time_factor' => '1.2' }
+      }
+    end
 
     before do
       allow(Tribes::Client).to receive(:new).and_return(client)
       allow(client).to receive(:change_world)
-      allow(GetWorldConfig).to receive(:new).and_return(config_action)
-      allow(GetUnitConfig).to receive(:new).and_return(unit_action)
-      allow(GetBuildingConfig).to receive(:new).and_return(building_action)
-      allow(config_action).to receive(:execute).and_return(
-        {
-          'xmlns' => '',
-          'speed' => '3.5',
-          'unit_speed' => '0.57',
-          'moral' => '0',
-          'build' => { 'destroy' => '1' },
-          'misc' => { 'kill_ranking' => '2', 'tutorial' => '0', 'trade_cancel_time' => '300' },
-          'commands' => { 'millis_arrival' => '1', 'command_cancel_time' => '600' }
-        }
-      )
-      allow(unit_action).to receive(:execute).and_return(
-        { 'xmlns' => '',
-          'spear' =>
-           { 'build_time' => '291.4285714',
-             'pop' => '1',
-             'speed' => '9.0225563920629',
-             'attack' => '10',
-             'defense' => '15',
-             'defense_cavalry' => '45',
-             'defense_archer' => '20',
-             'carry' => '25' },
-          'sword' =>
-           { 'build_time' => '428.5714286',
-             'pop' => '1',
-             'speed' => '11.027568924959',
-             'attack' => '25',
-             'defense' => '50',
-             'defense_cavalry' => '25',
-             'defense_archer' => '40',
-             'carry' => '15' } }
-      )
-      allow(building_action).to receive(:execute).and_return(
-        { 'xmlns' => '',
-          'main' =>
-           { 'max_level' => '30',
-             'min_level' => '1',
-             'wood' => '90',
-             'stone' => '80',
-             'iron' => '70',
-             'pop' => '5',
-             'wood_factor' => '1.26',
-             'stone_factor' => '1.275',
-             'iron_factor' => '1.26',
-             'pop_factor' => '1.17',
-             'build_time' => '257.1428571',
-             'build_time_factor' => '1.2' },
-          'barracks' =>
-           { 'max_level' => '25',
-             'min_level' => '0',
-             'wood' => '200',
-             'stone' => '170',
-             'iron' => '90',
-             'pop' => '7',
-             'wood_factor' => '1.26',
-             'stone_factor' => '1.28',
-             'iron_factor' => '1.26',
-             'pop_factor' => '1.17',
-             'build_time' => '514.2857143',
-             'build_time_factor' => '1.2' } }
-      )
+      allow(GameActionsService).to receive(:new).and_return(game_actions_service)
+      allow(game_actions_service).to receive(:world_config).and_return(world_config)
+      allow(game_actions_service).to receive(:unit_config).and_return(unit_config)
+      allow(game_actions_service).to receive(:building_config).and_return(building_config)
     end
 
     context 'world url is valid' do
@@ -97,20 +101,20 @@ RSpec.describe World, type: :model do
       before { subject.initialize_configs }
 
       it 'sets world config' do
-        expect(subject.world_config).to eq(config_action.execute)
+        expect(subject.world_config).to eq(game_actions_service.world_config)
       end
       it 'sets unit config' do
-        expect(subject.unit_config).to eq(unit_action.execute)
+        expect(subject.unit_config).to eq(game_actions_service.unit_config)
       end
       it 'sets building config' do
-        expect(subject.building_config).to eq(building_action.execute)
+        expect(subject.building_config).to eq(game_actions_service.building_config)
       end
     end
   end
 
   describe '#download_players' do
     let(:client) { double }
-    let(:players_action) { double }
+    let(:service) { double }
     let(:players) do
       [{ name: 'wannat8',
          external_id: 110_622,
@@ -129,8 +133,8 @@ RSpec.describe World, type: :model do
     before do
       allow(Tribes::Client).to receive(:new).and_return(client)
       allow(client).to receive(:change_world)
-      allow(GetPlayers).to receive(:new).and_return(players_action)
-      allow(players_action).to receive(:execute).and_return(players)
+      allow(GameActionsService).to receive(:new).and_return(service)
+      allow(service).to receive(:players).and_return(players)
       create(:tribe, external_id: 100, world_id: subject.id)
       create(:tribe, external_id: 1010, world_id: subject.id)
     end
@@ -184,7 +188,7 @@ RSpec.describe World, type: :model do
 
   describe '#download_villages' do
     let(:client) { double }
-    let(:villages_action) { double }
+    let(:game_actions_service) { double }
     let(:villages) do
       [{ external_id: 1,
          name: 'Sammie+C.',
@@ -213,8 +217,8 @@ RSpec.describe World, type: :model do
     before(:each) do
       allow(Tribes::Client).to receive(:new).and_return(client)
       allow(client).to receive(:change_world)
-      allow(GetVillages).to receive(:new).and_return(villages_action)
-      allow(villages_action).to receive(:execute) { villages }
+      allow(GameActionsService).to receive(:new).and_return(game_actions_service)
+      allow(game_actions_service).to receive(:villages) { villages }
       create(:player, external_id: 8_061_098, world_id: subject.id)
       create(:player, external_id: 8_049_221, world_id: subject.id)
       create(:player, external_id: 0, world_id: subject.id)
@@ -277,7 +281,7 @@ RSpec.describe World, type: :model do
 
   describe '#download_tribes' do
     let(:client) { double }
-    let(:tribes_action) { double }
+    let(:game_actions_service) { double }
     let(:tribes) do
       [{ external_id: 1,
          name: 'Old+Skool',
@@ -300,8 +304,8 @@ RSpec.describe World, type: :model do
     before(:each) do
       allow(Tribes::Client).to receive(:new).and_return(client)
       allow(client).to receive(:change_world)
-      allow(GetTribes).to receive(:new).and_return(tribes_action)
-      allow(tribes_action).to receive(:execute).and_return(tribes)
+      allow(GameActionsService).to receive(:new).and_return(game_actions_service)
+      allow(game_actions_service).to receive(:tribes).and_return(tribes)
       subject.download_tribes
     end
 

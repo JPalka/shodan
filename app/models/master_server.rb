@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class MasterServer < ApplicationRecord
-  has_many :accounts
-  has_many :worlds
+  has_many :accounts, dependent: :destroy
+  has_many :worlds, dependent: :destroy
 
   validates :link, presence: true
 
