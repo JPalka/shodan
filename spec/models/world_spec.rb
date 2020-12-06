@@ -16,6 +16,36 @@ RSpec.describe World, type: :model do
   it { is_expected.to serialize(:unit_config) }
   it { is_expected.to serialize(:building_config) }
 
+  describe '#add_player' do
+    it 'adds player if it does not exist' do
+      world = FactoryBot.create(:world_with_players)
+      account = FactoryBot.create(
+        :account,
+        master_server: world.master_server,
+        active_worlds: [world]
+      )
+      params = { 'player_id' => 1000, 'name' => 'tester', 'account_id' => account.id }
+
+      expect { world.add_player(**params) }.to change { world.players.count }.by(1)
+    end
+
+    it 'does not add player if player with this id exists' do
+      world = FactoryBot.create(:world_with_players)
+      account = FactoryBot.create(
+        :account,
+        master_server: world.master_server,
+        active_worlds: [world]
+      )
+      params = { 
+        'player_id' => world.players.first.external_id,
+        'name' => 'tester',
+        'account_id' => account.id
+      }
+
+      expect { world.add_player(**params) }.not_to change { world.players.count }
+    end
+  end
+
   describe '#initialize_configs' do
     let(:client) { double }
     let(:browser) { double }
