@@ -323,7 +323,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   timecop
-  tribes (~> 1)!
+  tribes!
   tzinfo-data
 
 RUBY VERSION

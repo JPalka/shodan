@@ -32,7 +32,7 @@ gem 'bunny'
 gem 'kaminari'
 gem 'kaminari-mongo_mapper'
 gem 'mongo_mapper'
-gem 'tribes', '~> 1', git: 'https://github.com/jpalka/tribes.git'
+gem 'tribes', git: 'https://github.com/jpalka/tribes.git'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
