@@ -16,14 +16,17 @@ class WorkerManager
 
   def start_worker(account_id)
     @logger.warn("account id: #{account_id}")
-    temp = AI::Engine.new(SecureRandom.uuid, account_id: account_id)
+    temp = AI::Engine.new(account_id: account_id)
+    # if worker with such id already exists delete it and replace it with new one
+    stop_worker(temp.id)
+
     temp.start
     @workers.push(temp)
     temp.id
   end
 
   def stop_worker(worker_id)
-    @workers.find { |worker| worker.id == worker_id }.stop
+    @workers.find { |worker| worker.id == worker_id }&.stop
     @workers.delete_if { |worker| worker.id == worker_id }
   end
 

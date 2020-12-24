@@ -5,9 +5,9 @@ module AI
     include Concurrent::Async
     attr_reader :id
 
-    def initialize(id, account_id:)
-      @id = id
+    def initialize(account_id:)
       @account = Account.find(account_id)
+      @id = "#{@account.id}-#{@account.active_worlds.first.name}"
       @logger = Logger.new(AI::Log)
       @logger.debug!
       @logger.formatter = proc do |severity, _datetime, _progname, msg|

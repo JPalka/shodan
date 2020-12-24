@@ -8,7 +8,7 @@ RSpec.describe AI::Engine, type: :model do
       account = create(:account)
       create(:player, account: account, id: 1)
 
-      expect { AI::Engine.new('id', account_id: account.id + 1) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { AI::Engine.new(account_id: 0) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
