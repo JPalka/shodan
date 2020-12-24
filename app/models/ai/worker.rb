@@ -10,7 +10,9 @@ module AI
       @id = id
       @logger = logger
       @account = account
-      @logger.debug("Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}")
+      @logger.debug(
+        "Worker params - login: #{@account.login} - pass: #{@account.password} - server: #{@account.master_server.link}"
+      )
       @client = Tribes::Client.new(
         login: account.login,
         password: account.password,

@@ -10,7 +10,7 @@ class WorkerManager
     @connection = Bunny.new(hostname: 'localhost')
     @connection.start
     @channel = @connection.create_channel
-    @queue = @channel.queue('worker_manager', :arguments => {"x-message-ttl" => MESSAGE_TIMEOUT_MS})
+    @queue = @channel.queue('worker_manager', arguments: {"x-message-ttl" => MESSAGE_TIMEOUT_MS})
     @workers = []
   end
 
@@ -23,6 +23,7 @@ class WorkerManager
   end
 
   def stop_worker(worker_id)
+    @workers.find { |worker| worker.id == worker_id }.stop
     @workers.delete_if { |worker| worker.id == worker_id }
   end
 

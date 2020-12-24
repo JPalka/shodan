@@ -11,6 +11,6 @@ Rails.application.routes.draw do
   resources :worlds, only: [:show] do
     resources :players
   end
-  resource :ai, only: [:create], controller: "ai"
+  resources :ai, controller: 'ai'
   resources :logs
 end

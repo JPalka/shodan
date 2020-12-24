@@ -31,7 +31,6 @@ module AI
 
     def stop
       @main_loop.stop
-      @task_dispatcher.destroy
       @logger.info('AI stopped')
     end
 
