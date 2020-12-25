@@ -7,6 +7,7 @@ RSpec.describe 'Village', type: :model do
 
   it { is_expected.to belong_to(:world) }
   it { is_expected.to belong_to(:owner) }
+  it { is_expected.to have_one(:village_resources) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_numericality_of(:points).only_integer.is_greater_than_or_equal_to(0) }

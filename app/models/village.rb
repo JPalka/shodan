@@ -3,6 +3,7 @@
 class Village < ApplicationRecord
   belongs_to :owner, class_name: 'Player'
   belongs_to :world
+  has_one    :village_resources, dependent: :destroy
 
   validates :name, presence: true
   validates :points, numericality: { only_integer: true, allow_nil: true, greater_than_or_equal_to: 0 }

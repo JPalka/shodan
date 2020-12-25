@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_26_134651) do
+ActiveRecord::Schema.define(version: 2020_12_24_235932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,22 @@ ActiveRecord::Schema.define(version: 2020_07_26_134651) do
     t.index ["world_id"], name: "index_tribes_on_world_id"
   end
 
+  create_table "village_resources", force: :cascade do |t|
+    t.integer "wood"
+    t.integer "stone"
+    t.integer "iron"
+    t.float "wood_prod"
+    t.float "stone_prod"
+    t.float "iron_prod"
+    t.integer "max_storage"
+    t.integer "pop"
+    t.integer "max_pop"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "village_id", null: false
+    t.index ["village_id"], name: "index_village_resources_on_village_id"
+  end
+
   create_table "villages", force: :cascade do |t|
     t.integer "external_id", null: false
     t.integer "x_coord"
@@ -111,6 +127,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_134651) do
   add_foreign_key "players", "worlds"
   add_foreign_key "task_logs", "accounts"
   add_foreign_key "tribes", "worlds"
+  add_foreign_key "village_resources", "villages"
   add_foreign_key "villages", "players", column: "owner_id"
   add_foreign_key "villages", "worlds"
   add_foreign_key "worlds", "master_servers"
