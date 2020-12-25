@@ -12,6 +12,7 @@ RSpec.describe GameActionsService do
         allow(client).to receive(:browser)
         allow(client).to receive(:change_world).and_return(true)
         allow(client).to receive(:login_to_world).and_return(expected_response)
+        allow(client).to receive(:villages)
         service = GameActionsService.new(client)
 
         expect(service.enter_world('en115')).to eq(expected_response['result'])

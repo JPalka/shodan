@@ -9,7 +9,9 @@ class GameActionsService
   def enter_world(world_name)
     raise ArgumentError, "World #{world_name} does not exist" unless @client.change_world(world_name)
 
-    @client.login_to_world['result']
+    result = @client.login_to_world['result']
+    @client.villages
+    result
   end
 
   def building_config
@@ -46,6 +48,11 @@ class GameActionsService
     @browser.extract[:villages].map(&method(:villages_mapping))
   end
 
+  def village_resources
+    resources = @client.village_data['result']
+    village_resources_mapping(resources.symbolize_keys)
+  end
+
   def world_config
     @browser.load_page 'world_config'
     sleep(1)
@@ -61,6 +68,10 @@ class GameActionsService
   end
 
   private
+
+  def village_resources_mapping(hash)
+    remap_hash(hash, { pop_max: :max_pop })
+  end
 
   def villages_mapping(hash)
     remap_hash(hash, { id: :external_id, x: :x_coord, y: :y_coord, player_id: :owner })
